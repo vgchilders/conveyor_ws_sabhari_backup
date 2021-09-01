@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/recycling-robot-mqp/ros_ws/devel/setup.sh
