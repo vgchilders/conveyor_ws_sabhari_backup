@@ -20,10 +20,10 @@
 #define STR3_X_DIR	32
 
 // limit switches
-#define LIM_X1_MIN  6 // Old Value : 2
-#define LIM_X1_MAX  2
-#define LIM_X2_MIN  5
-#define LIM_X2_MAX  4
+#define LIM_X1_MIN  2 // Old Value : 2
+#define LIM_X1_MAX  6
+#define LIM_X2_MIN  4
+#define LIM_X2_MAX  5
 #define LIM_Y1_MIN  3 // Old Value : 6
 #define LIM_Y1_MAX	7
 #define LIM_Y2_MIN	8

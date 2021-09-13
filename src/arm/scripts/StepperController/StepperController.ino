@@ -3,8 +3,8 @@
 #include <AccelStepper.h>
 
 AccelStepper stepper_x(AccelStepper::DRIVER, STR3_X_STEP, STR3_X_DIR, 0, 0, false);
-//AccelStepper stepper_y1(AccelStepper::DRIVER, STR3_Y1_STEP, STR3_Y1_DIR, 0, 0, false);
-//AccelStepper stepper_y2(AccelStepper::DRIVER, STR3_Y2_STEP, STR3_Y2_DIR, 0, 0, false);
+AccelStepper stepper_y1(AccelStepper::DRIVER, STR3_Y1_STEP, STR3_Y1_DIR, 0, 0, false);
+AccelStepper stepper_y2(AccelStepper::DRIVER, STR3_Y2_STEP, STR3_Y2_DIR, 0, 0, false);
 
 void blinkLight(){
   digitalWrite(LED_PIN, LOW);
@@ -18,14 +18,14 @@ void blinkLight(){
 
 void stepperEnablePins(){
   stepper_x.setEnablePin(STR3_X_EN);
-//  stepper_y1.setEnablePin(STR3_Y1_EN);
-//  stepper_y2.setEnablePin(STR3_Y2_EN);
+ stepper_y1.setEnablePin(STR3_Y1_EN);
+ stepper_y2.setEnablePin(STR3_Y2_EN);
 }
 
 void stepperInvertPins(){
   stepper_x.setPinsInverted(true, true, true);
-//  stepper_y1.setPinsInverted(true, true, true);
-//  stepper_y2.setPinsInverted(true, true, true);
+ stepper_y1.setPinsInverted(true, true, true);
+ stepper_y2.setPinsInverted(true, true, true);
 }
 
 void stepperInitialize(){
@@ -33,25 +33,25 @@ void stepperInitialize(){
   stepper_x.setAcceleration(ACCELERATION);
   stepper_x.enableOutputs();
   
-//  stepper_y1.setMaxSpeed(MAX_SPEED);
-//  stepper_y1.setAcceleration(ACCELERATION);
-//  stepper_y1.enableOutputs();
-//  
-//  stepper_y2.setMaxSpeed(MAX_SPEED);
-//  stepper_y2.setAcceleration(ACCELERATION);
-//  stepper_y2.enableOutputs();
+ stepper_y1.setMaxSpeed(MAX_SPEED);
+ stepper_y1.setAcceleration(ACCELERATION);
+ stepper_y1.enableOutputs();
+ 
+ stepper_y2.setMaxSpeed(MAX_SPEED);
+ stepper_y2.setAcceleration(ACCELERATION);
+ stepper_y2.enableOutputs();
 }
 
 void pullUPLimitSwitches(){
   pinMode(LIM_X1_MIN, INPUT_PULLUP);
-//  pinMode(LIM_X2_MIN, INPUT_PULLUP);
-//  pinMode(LIM_X1_MAX, INPUT_PULLUP);
-//  pinMode(LIM_X2_MAX, INPUT_PULLUP);
+ pinMode(LIM_X2_MIN, INPUT_PULLUP);
+ pinMode(LIM_X1_MAX, INPUT_PULLUP);
+ pinMode(LIM_X2_MAX, INPUT_PULLUP);
   
-//  pinMode(LIM_Y1_MIN, INPUT_PULLUP);
-//  pinMode(LIM_Y2_MIN, INPUT_PULLUP);
-//  pinMode(LIM_Y1_MAX, INPUT_PULLUP);
-//  pinMode(LIM_Y2_MAX, INPUT_PULLUP);
+ pinMode(LIM_Y1_MIN, INPUT_PULLUP);
+ pinMode(LIM_Y2_MIN, INPUT_PULLUP);
+ pinMode(LIM_Y1_MAX, INPUT_PULLUP);
+ pinMode(LIM_Y2_MAX, INPUT_PULLUP);
 }
 
 const byte numChars = 32;
@@ -136,7 +136,7 @@ void homeXAxis(){
   
   Serial.print("Homing X-axis...");
   // Move until X-min limit switch is hit
-  while(digitalRead(LIM_X1_MIN)){
+  while(digitalRead(LIM_X1_MIN) || digitalRead(LIM_X2_MIN)){
     stepper_x.moveTo(initial_homing);
     initial_homing++;
     stepper_x.run();
@@ -145,7 +145,7 @@ void homeXAxis(){
   stepper_x.setCurrentPosition(0);
   initial_homing=-1;
   // Move until X-min limit switch is deactivated
-  while(!digitalRead(LIM_X1_MIN)){
+  while(!digitalRead(LIM_X1_MIN) && !digitalRead(LIM_X2_MIN)){
     stepper_x.moveTo(initial_homing);
     initial_homing--;
     stepper_x.run();
