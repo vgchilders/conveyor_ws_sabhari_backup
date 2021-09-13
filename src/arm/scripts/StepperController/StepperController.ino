@@ -126,6 +126,37 @@ void readData(){
   }
 }
 
+enum LimitState {
+  None,
+  Min,
+  Max,
+};
+
+struct LimitStatus {
+  LimitState xAxis = LimitState::None;
+  LimitState yAxis = LimitState::None;
+};
+
+struct LimitStatus checkLimits() {
+  LimitStatus limitStatus;
+
+  if(!digitalRead(LIM_X1_MIN) || !digitalRead(LIM_X2_MIN)){
+    limitStatus.xAxis = LimitState::Min;
+  }
+  else if(!digitalRead(LIM_X1_MAX) || !digitalRead(LIM_X2_MAX)){
+    limitStatus.xAxis = LimitState::Max;
+  }
+
+  if(!digitalRead(LIM_Y1_MIN) || !digitalRead(LIM_Y2_MIN)){
+    limitStatus.yAxis = LimitState::Min;
+  }
+  if(!digitalRead(LIM_Y1_MAX) || !digitalRead(LIM_Y2_MAX)){
+    limitStatus.yAxis = LimitState::Max;
+  }
+
+  return limitStatus;
+}
+
 // Function to home X-axis
 void homeXAxis(){
   // Reducing speed for acuracy
@@ -182,6 +213,8 @@ void setup() {
 robot_states current_state = WAITING_TO_START;
 
 void loop(){
+  LimitStatus limitStatus = checkLimits();
+
   switch(current_state){
     case WAITING_TO_START:
       Serial.println("Waiting to Start");
@@ -212,10 +245,11 @@ void loop(){
       }
       break;
     case MOVING:
-      if(!digitalRead(LIM_X1_MIN)){
-        current_state = X_MIN_LS_HIT;
-        stepper_x.stop();
-      }
+      Serial.println(limitStatus.xAxis);
+      // if(limitStatus.xAxis == LimitState::Min){
+      //   current_state = X_MIN_LS_HIT;
+      //   stepper_x.stop();
+      // }
       if(current_state == MOVING){
         stepper_x.run();
         if(stepper_x.distanceToGo() == 0){
