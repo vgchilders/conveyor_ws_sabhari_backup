@@ -20,5 +20,16 @@ enum robot_states{
   MOVING
 };
 
+enum LimitState {
+  None,
+  Min,
+  Max,
+};
+
+struct LimitStatus {
+  LimitState xAxis = LimitState::None;
+  LimitState yAxis = LimitState::None;
+};
+
 
 #endif
