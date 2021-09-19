@@ -8,6 +8,7 @@ const int X_MAX_POS = 1500;
 const int X_MIN_POS = 0;
 const int Y_MAX_POS = 750;
 const int Y_MIN_POS = 0;
+const int PAST_READING_REQ = 2;
 
 enum robot_states{
   X_MIN_LS_HIT,
@@ -29,6 +30,11 @@ enum LimitState {
 struct LimitStatus {
   LimitState xAxis = LimitState::None;
   LimitState yAxis = LimitState::None;
+
+  int xMaxCount = 0;
+  int xMinCount = 0;
+  int yMaxCount = 0;
+  int yMinCount = 0;
 };
 
 
