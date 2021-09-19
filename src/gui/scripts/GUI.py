@@ -14,6 +14,9 @@ from arm.srv import dynamixel_srv, stepper_srv
 from arm_controller import Dynamixel, Teensy
 
 class GUI(Ui_Form):
+    belt_diam = 1.25
+    x_axis_min = 0; x_axis_max = 2 * np.pi *(belt_diam/2) * (Teensy.x_axis_max/200)
+    y_axis_min = 0; y_axis_max = 2 * np.pi *(belt_diam/2) * (Teensy.y_axis_max/200)
 
     def __init__(self, Form):
         self.setupUi(Form)
@@ -38,11 +41,18 @@ class GUI(Ui_Form):
         self.Img_Depth_Button.clicked.connect(self.Depth_Button_clicked)
 
     def setup_SpinBox_Limits(self):
-        self.XY_X_SpinBox.setMinimum(Teensy.x_axis_min)
-        self.XY_X_SpinBox.setMaximum(Teensy.x_axis_max)
+        # self.XY_X_SpinBox.setMinimum(Teensy.x_axis_min)
+        # self.XY_X_SpinBox.setMaximum(Teensy.x_axis_max)
 
-        self.XY_Y_SpinBox.setMinimum(Teensy.y_axis_min)
-        self.XY_Y_SpinBox.setMaximum(Teensy.y_axis_max)
+        # self.XY_Y_SpinBox.setMinimum(Teensy.y_axis_min)
+        # self.XY_Y_SpinBox.setMaximum(Teensy.y_axis_max)
+
+
+        self.XY_X_SpinBox.setMinimum(x_axis_min)
+        self.XY_X_SpinBox.setMaximum(x_axis_max)
+
+        self.XY_Y_SpinBox.setMinimum(y_axis_min)
+        self.XY_Y_SpinBox.setMaximum(y_axis_max)
 
         self.Z_SpinBox.setMinimum(Dynamixel.z_axis_min)
         self.Z_SpinBox.setMaximum(Dynamixel.z_axis_max)
@@ -97,6 +107,7 @@ class GUI(Ui_Form):
 
     def XY_Button_Clicked(self):
         print("Moving X,Y-Axis to ",self.XY_X_SpinBox.value(), ",",self.XY_Y_SpinBox.value())
+        ##TODO ADD CONVERSION
         self.srv_set_xy_axis(self.XY_X_SpinBox.value(),self.XY_Y_SpinBox.value())
   
     def Z_Button_Clicked(self):
