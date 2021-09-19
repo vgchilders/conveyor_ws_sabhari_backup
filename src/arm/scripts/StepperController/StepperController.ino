@@ -250,8 +250,8 @@ void homeYAxis(){
   stepper_y1.stop();
   stepper_y2.stop();
 
-  stepper_y1.setMaxSpeed(MAX_SPEED);
-  stepper_y2.setMaxSpeed(MAX_SPEED);
+  //stepper_y1.setMaxSpeed(MAX_SPEED);
+  //stepper_y2.setMaxSpeed(MAX_SPEED);
   delay(5);
       
   Serial.println("Completed");
