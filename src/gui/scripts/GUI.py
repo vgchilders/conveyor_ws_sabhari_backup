@@ -41,18 +41,18 @@ class GUI(Ui_Form):
         self.Img_Depth_Button.clicked.connect(self.Depth_Button_clicked)
 
     def setup_SpinBox_Limits(self):
-        # self.XY_X_SpinBox.setMinimum(Teensy.x_axis_min)
-        # self.XY_X_SpinBox.setMaximum(Teensy.x_axis_max)
+        self.XY_X_SpinBox.setMinimum(Teensy.x_axis_min)
+        self.XY_X_SpinBox.setMaximum(Teensy.x_axis_max)
 
-        # self.XY_Y_SpinBox.setMinimum(Teensy.y_axis_min)
-        # self.XY_Y_SpinBox.setMaximum(Teensy.y_axis_max)
+        self.XY_Y_SpinBox.setMinimum(Teensy.y_axis_min)
+        self.XY_Y_SpinBox.setMaximum(Teensy.y_axis_max)
 
 
-        self.XY_X_SpinBox.setMinimum(x_axis_min)
-        self.XY_X_SpinBox.setMaximum(x_axis_max)
+        # self.XY_X_SpinBox.setMinimum(x_axis_min)
+        # self.XY_X_SpinBox.setMaximum(x_axis_max)
 
-        self.XY_Y_SpinBox.setMinimum(y_axis_min)
-        self.XY_Y_SpinBox.setMaximum(y_axis_max)
+        # self.XY_Y_SpinBox.setMinimum(y_axis_min)
+        # self.XY_Y_SpinBox.setMaximum(y_axis_max)
 
         self.Z_SpinBox.setMinimum(Dynamixel.z_axis_min)
         self.Z_SpinBox.setMaximum(Dynamixel.z_axis_max)
