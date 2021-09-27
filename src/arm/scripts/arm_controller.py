@@ -99,8 +99,8 @@ class Dynamixel:
         return True
 
 class Teensy:
-    x_axis_min = 0; x_axis_max = 1500
-    y_axis_min = 0; y_axis_max = 750
+    x_axis_min = 0; x_axis_max = 1610
+    y_axis_min = 0; y_axis_max = 900
     
     def __init__(self):
         self.setup_services()

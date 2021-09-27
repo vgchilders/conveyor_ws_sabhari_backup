@@ -13,11 +13,13 @@ from cv_bridge import CvBridge
 from arm.srv import dynamixel_srv, stepper_srv
 from arm_controller import Dynamixel, Teensy
 
-belt_diam = 1.25
+belt_diam = 3.175; belt_circumfrence = 2 * np.pi *(belt_diam/2)
+x_axis_min = 0; # x_axis_max = belt_circumfrence * (Teensy.x_axis_max/200)
+y_axis_min = 0; # y_axis_max = belt_circumfrence * (Teensy.y_axis_max/200)
+x_axis_max = 80
+y_axis_max = 44
+
 class GUI(Ui_Form):
-    
-    x_axis_min = 0; x_axis_max = 2 * np.pi *(belt_diam/2) * (Teensy.x_axis_max/200)
-    y_axis_min = 0; y_axis_max = 2 * np.pi *(belt_diam/2) * (Teensy.y_axis_max/200)
 
     def __init__(self, Form):
         self.setupUi(Form)
@@ -42,13 +44,6 @@ class GUI(Ui_Form):
         self.Img_Depth_Button.clicked.connect(self.Depth_Button_clicked)
 
     def setup_SpinBox_Limits(self):
-        # self.XY_X_SpinBox.setMinimum(Teensy.x_axis_min)
-        # self.XY_X_SpinBox.setMaximum(Teensy.x_axis_max)
-
-        # self.XY_Y_SpinBox.setMinimum(Teensy.y_axis_min)
-        # self.XY_Y_SpinBox.setMaximum(Teensy.y_axis_max)
-
-
         self.XY_X_SpinBox.setMinimum(x_axis_min)
         self.XY_X_SpinBox.setMaximum(x_axis_max)
 
@@ -108,9 +103,13 @@ class GUI(Ui_Form):
 
     def XY_Button_Clicked(self):
         print("Moving X,Y-Axis to ",self.XY_X_SpinBox.value(), ",",self.XY_Y_SpinBox.value())
+        print("X axis max: ",x_axis_max, ", Y axis max: ",y_axis_max)
+
+        print("Moving X,Y-Axis to ",self.XY_X_SpinBox.value()*200, ",",(self.XY_X_SpinBox.value()*200)/belt_circumfrence)
         ##TODO ADD CONVERSION
-        x_stepper= round(2 * np.pi *(belt_diam/2) * (self.XY_X_SpinBox.value()/200))
-        y_stepper= round(2 * np.pi *(belt_diam/2) * (self.XY_Y_SpinBox.value()/200))
+        x_stepper= round((self.XY_X_SpinBox.value()*200)/belt_circumfrence)
+        y_stepper= round((self.XY_Y_SpinBox.value()*200)/belt_circumfrence)
+        print("Moving X,Y-Axis to ",x_stepper, ",",y_stepper)
         self.srv_set_xy_axis(x_stepper,y_stepper)
   
     def Z_Button_Clicked(self):

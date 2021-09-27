@@ -210,8 +210,8 @@ void homeXAxis(){
 // Function to home Y-axis
 void homeYAxis(){
   // Reducing speed for acuracy
-  stepper_y1.setMaxSpeed(MIN_SPEED);
-  stepper_y2.setMaxSpeed(MIN_SPEED);
+  stepper_y1.setMaxSpeed(MIN_SPEED / 2);
+  stepper_y2.setMaxSpeed(MIN_SPEED / 2);
   delay(5);
   
   long initial_homing=-1;
