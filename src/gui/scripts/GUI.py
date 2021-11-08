@@ -7,7 +7,7 @@ import cv2
 
 import rospy
 import numpy as np
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, PointCloud2
 from std_msgs.msg import Float64, String
 from cv_bridge import CvBridge
 from arm.srv import dynamixel_srv, stepper_srv
@@ -63,6 +63,8 @@ class GUI(Ui_Form):
 
         self.sub_rgb = rospy.Subscriber("/camera/color/image_raw", Image, self.callback_rgb_image)
         self.sub_depth = rospy.Subscriber("/camera/depth/image_rect_raw", Image, self.callback_depth_image)
+        #self.sub_points = rospy.Subscriber("/camera/depth/color/points", PointCloud2, self.callback_point_cloud)
+        self.sub_aligned = rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.callback_alligned)
 
     def disconnect_subscribers(self):
         self.sub_xy_axis.unregister()
@@ -71,6 +73,8 @@ class GUI(Ui_Form):
 
         self.sub_rgb.unregister()
         self.sub_depth.unregister()
+        #self.sub_points.unregister
+        self.sub_aligned.unregister
 
     def setup_services(self):
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
@@ -99,8 +103,13 @@ class GUI(Ui_Form):
             frame = cv2.convertScaleAbs(frame,alpha=0.05)
             frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2RGB)
             frame = cv2.resize(frame,(640,480))
+            print(frame[0])
             self.Img_Frame.setPixmap(QtGui.QPixmap(QtGui.QImage(frame,frame.shape[1],frame.shape[0],frame.strides[0],QtGui.QImage.Format_RGB888)))
-
+    def callback_point_cloud(self,data):
+        print(data.height,data.width)
+    def callback_alligned(self,data):
+        #print(data.height,data.width)
+        print(data.data[0][0])
     def XY_Button_Clicked(self):
         print("Moving X,Y-Axis to ",self.XY_X_SpinBox.value(), ",",self.XY_Y_SpinBox.value())
         print("X axis max: ",x_axis_max, ", Y axis max: ",y_axis_max)
