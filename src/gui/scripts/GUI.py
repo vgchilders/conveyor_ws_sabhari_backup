@@ -64,7 +64,7 @@ class GUI(Ui_Form):
         self.sub_rgb = rospy.Subscriber("/camera/color/image_raw", Image, self.callback_rgb_image)
         self.sub_depth = rospy.Subscriber("/camera/depth/image_rect_raw", Image, self.callback_depth_image)
         #self.sub_points = rospy.Subscriber("/camera/depth/color/points", PointCloud2, self.callback_point_cloud)
-        self.sub_aligned = rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.callback_alligned)
+        #self.sub_aligned = rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.callback_alligned)
 
     def disconnect_subscribers(self):
         self.sub_xy_axis.unregister()
@@ -109,7 +109,8 @@ class GUI(Ui_Form):
         print(data.height,data.width)
     def callback_alligned(self,data):
         #print(data.height,data.width)
-        print(data.data[0][0])
+        #print(data.data[0][0])
+        return
     def XY_Button_Clicked(self):
         print("Moving X,Y-Axis to ",self.XY_X_SpinBox.value(), ",",self.XY_Y_SpinBox.value())
         print("X axis max: ",x_axis_max, ", Y axis max: ",y_axis_max)

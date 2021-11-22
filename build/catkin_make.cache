@@ -1,2 +1,2 @@
-arm:gui
+arm:camera:gui
 -DCATKIN_DEVEL_PREFIX=/home/recycling-robot-mqp/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/recycling-robot-mqp/ros_ws/install -G Unix Makefiles
