@@ -11,6 +11,7 @@ from sensor_msgs.msg import Image, PointCloud2
 from std_msgs.msg import Float64, String
 from cv_bridge import CvBridge
 from arm.srv import dynamixel_srv, stepper_srv
+from geometry_msgs.msg import Point
 from arm_controller import Dynamixel, Teensy
 
 belt_diam = 3.175; belt_circumfrence = 2 * np.pi *(belt_diam/2)
@@ -23,10 +24,12 @@ class GUI(Ui_Form):
 
     def __init__(self, Form):
         self.setupUi(Form)
+        self.Img_Frame.mousePressEvent = self.pubMousePos
         Form.setWindowTitle("Conveyor Belt GUI")
         self.setup_signals()
         self.setup_SpinBox_Limits()
         self.setup_subscribers()
+        self.setup_publishers()
         self.setup_services()
         self.br = CvBridge()
 
@@ -76,6 +79,9 @@ class GUI(Ui_Form):
         #self.sub_points.unregister
         self.sub_aligned.unregister
 
+    def setup_publishers(self):
+        self.pub_pixel_loc = rospy.Publisher("/gui_pixel_pos", Point, queue_size=1)
+
     def setup_services(self):
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
         self.srv_set_z_axis = rospy.ServiceProxy('arm/z_axis_set', dynamixel_srv)
@@ -96,6 +102,15 @@ class GUI(Ui_Form):
             frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
             frame = cv2.resize(frame,(640,480))
             self.Img_Frame.setPixmap(QtGui.QPixmap(QtGui.QImage(frame,frame.shape[1],frame.shape[0],frame.strides[0],QtGui.QImage.Format_RGB888)))
+
+    def pubMousePos(self, event):
+        x = event.pos().x()
+        y = event.pos().y()
+
+        print("x: {0}, y: {1}, evebt: {2}".format(x, y, event))
+        
+        point = Point(x, y, 0)
+        self.pub_pixel_loc.publish(point)
 
     def callback_depth_image(self,data):
         if self.Img_Depth_Button.isChecked():
