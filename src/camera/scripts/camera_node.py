@@ -51,7 +51,7 @@ class Camera:
 		for new_trash in new_trash_items:
 			for existing_trash in self.trash_items:
 				if new_trash.compare_item(existing_trash):
-					existing_trash.update(new_trash)
+					existing_trash.update_item(new_trash)
 					break
 			else:
 				self.trash_items.append(new_trash)
