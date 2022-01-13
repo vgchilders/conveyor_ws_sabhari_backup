@@ -14,6 +14,10 @@ class TrashItem:
         return self.calc_iou(self.get_bounding_box(self), self.get_bounding_box(new_item)) > IOU_THRESHOLD
             
     
+    def update_item(self, new_item: TrashItem):
+        # TODO: implement this
+        return
+
     def get_bounding_box(item: TrashItem):
         x1 = self.x - round(self.width / 2)
         x2 = self.x + round(self.width / 2)
