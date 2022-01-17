@@ -13,21 +13,21 @@ fi
 
 echo_and_run() { echo "+ $@" ; "$@" ; }
 
-echo_and_run cd "/home/recycling-robot-mqp/ros_ws/src/arm"
+echo_and_run cd "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm"
 
 # ensure that Python install destination exists
-echo_and_run mkdir -p "$DESTDIR/home/recycling-robot-mqp/ros_ws/install/lib/python3/dist-packages"
+echo_and_run mkdir -p "$DESTDIR/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install/lib/python3/dist-packages"
 
 # Note that PYTHONPATH is pulled from the environment to support installing
 # into one location when some dependencies were installed in another
 # location, #123.
 echo_and_run /usr/bin/env \
-    PYTHONPATH="/home/recycling-robot-mqp/ros_ws/install/lib/python3/dist-packages:/home/recycling-robot-mqp/ros_ws/build/lib/python3/dist-packages:$PYTHONPATH" \
-    CATKIN_BINARY_DIR="/home/recycling-robot-mqp/ros_ws/build" \
+    PYTHONPATH="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install/lib/python3/dist-packages:/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/lib/python3/dist-packages:$PYTHONPATH" \
+    CATKIN_BINARY_DIR="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build" \
     "/usr/bin/python3" \
-    "/home/recycling-robot-mqp/ros_ws/src/arm/setup.py" \
+    "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm/setup.py" \
      \
-    build --build-base "/home/recycling-robot-mqp/ros_ws/build/arm" \
+    build --build-base "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm" \
     install \
     --root="${DESTDIR-/}" \
-    --install-layout=deb --prefix="/home/recycling-robot-mqp/ros_ws/install" --install-scripts="/home/recycling-robot-mqp/ros_ws/install/bin"
+    --install-layout=deb --prefix="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install" --install-scripts="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install/bin"

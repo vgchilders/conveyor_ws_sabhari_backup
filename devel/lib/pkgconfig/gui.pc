@@ -1,4 +1,4 @@
-prefix=/home/recycling-robot-mqp/ros_ws/devel
+prefix=/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel
 
 Name: gui
 Description: Description of gui

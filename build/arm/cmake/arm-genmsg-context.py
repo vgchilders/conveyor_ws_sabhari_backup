@@ -1,7 +1,7 @@
 # generated from genmsg/cmake/pkg-genmsg.context.in
 
 messages_str = ""
-services_str = "/home/recycling-robot-mqp/ros_ws/src/arm/srv/dynamixel_srv.srv;/home/recycling-robot-mqp/ros_ws/src/arm/srv/stepper_srv.srv"
+services_str = "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm/srv/dynamixel_srv.srv;/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm/srv/stepper_srv.srv"
 pkg_name = "arm"
 dependencies_str = "std_msgs"
 langs = "gencpp;geneus;genlisp;gennodejs;genpy"
