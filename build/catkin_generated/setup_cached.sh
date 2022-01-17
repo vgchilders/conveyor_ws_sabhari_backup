@@ -12,5 +12,5 @@ export LD_LIBRARY_PATH="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/dev
 export PKG_CONFIG_PATH="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD='/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build'
 export PYTHONPATH="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/lib/python3/dist-packages:$PYTHONPATH"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/recycling-robot-mqp/ros_ws/src:/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src:$ROS_PACKAGE_PATH"
+export ROSLISP_PACKAGE_DIRECTORIES='/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src:/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src:$ROS_PACKAGE_PATH"

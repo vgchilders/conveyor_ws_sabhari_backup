@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/recycling-robot-mqp/ros_ws/src
+CMAKE_SOURCE_DIR = /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/recycling-robot-mqp/ros_ws/build
+CMAKE_BINARY_DIR = /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build
 
 # Utility rule file for arm_gencpp.
 
@@ -63,10 +63,10 @@ arm/CMakeFiles/arm_gencpp.dir/build: arm_gencpp
 .PHONY : arm/CMakeFiles/arm_gencpp.dir/build
 
 arm/CMakeFiles/arm_gencpp.dir/clean:
-	cd /home/recycling-robot-mqp/ros_ws/build/arm && $(CMAKE_COMMAND) -P CMakeFiles/arm_gencpp.dir/cmake_clean.cmake
+	cd /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm && $(CMAKE_COMMAND) -P CMakeFiles/arm_gencpp.dir/cmake_clean.cmake
 .PHONY : arm/CMakeFiles/arm_gencpp.dir/clean
 
 arm/CMakeFiles/arm_gencpp.dir/depend:
-	cd /home/recycling-robot-mqp/ros_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/recycling-robot-mqp/ros_ws/src /home/recycling-robot-mqp/ros_ws/src/arm /home/recycling-robot-mqp/ros_ws/build /home/recycling-robot-mqp/ros_ws/build/arm /home/recycling-robot-mqp/ros_ws/build/arm/CMakeFiles/arm_gencpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/CMakeFiles/arm_gencpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : arm/CMakeFiles/arm_gencpp.dir/depend
 

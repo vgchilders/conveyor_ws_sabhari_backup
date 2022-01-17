@@ -1,8 +1,8 @@
-# Install script for directory: /home/recycling-robot-mqp/ros_ws/src/gui
+# Install script for directory: /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/gui
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/recycling-robot-mqp/ros_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/recycling-robot-mqp/ros_ws/build/gui/catkin_generated/installspace/gui.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/gui/catkin_generated/installspace/gui.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gui/cmake" TYPE FILE FILES
-    "/home/recycling-robot-mqp/ros_ws/build/gui/catkin_generated/installspace/guiConfig.cmake"
-    "/home/recycling-robot-mqp/ros_ws/build/gui/catkin_generated/installspace/guiConfig-version.cmake"
+    "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/gui/catkin_generated/installspace/guiConfig.cmake"
+    "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/gui/catkin_generated/installspace/guiConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gui" TYPE FILE FILES "/home/recycling-robot-mqp/ros_ws/src/gui/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gui" TYPE FILE FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/gui/package.xml")
 endif()
 

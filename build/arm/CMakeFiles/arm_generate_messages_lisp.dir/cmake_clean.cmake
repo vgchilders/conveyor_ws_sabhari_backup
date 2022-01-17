@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/recycling-robot-mqp/ros_ws/devel/share/common-lisp/ros/arm/srv/dynamixel_srv.lisp"
-  "/home/recycling-robot-mqp/ros_ws/devel/share/common-lisp/ros/arm/srv/stepper_srv.lisp"
+  "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/share/common-lisp/ros/arm/srv/dynamixel_srv.lisp"
+  "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/share/common-lisp/ros/arm/srv/stepper_srv.lisp"
   "CMakeFiles/arm_generate_messages_lisp"
 )
 

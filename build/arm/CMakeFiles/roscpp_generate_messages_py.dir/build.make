@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/recycling-robot-mqp/ros_ws/src
+CMAKE_SOURCE_DIR = /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/recycling-robot-mqp/ros_ws/build
+CMAKE_BINARY_DIR = /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build
 
 # Utility rule file for roscpp_generate_messages_py.
 
@@ -63,10 +63,10 @@ arm/CMakeFiles/roscpp_generate_messages_py.dir/build: roscpp_generate_messages_p
 .PHONY : arm/CMakeFiles/roscpp_generate_messages_py.dir/build
 
 arm/CMakeFiles/roscpp_generate_messages_py.dir/clean:
-	cd /home/recycling-robot-mqp/ros_ws/build/arm && $(CMAKE_COMMAND) -P CMakeFiles/roscpp_generate_messages_py.dir/cmake_clean.cmake
+	cd /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm && $(CMAKE_COMMAND) -P CMakeFiles/roscpp_generate_messages_py.dir/cmake_clean.cmake
 .PHONY : arm/CMakeFiles/roscpp_generate_messages_py.dir/clean
 
 arm/CMakeFiles/roscpp_generate_messages_py.dir/depend:
-	cd /home/recycling-robot-mqp/ros_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/recycling-robot-mqp/ros_ws/src /home/recycling-robot-mqp/ros_ws/src/arm /home/recycling-robot-mqp/ros_ws/build /home/recycling-robot-mqp/ros_ws/build/arm /home/recycling-robot-mqp/ros_ws/build/arm/CMakeFiles/roscpp_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/CMakeFiles/roscpp_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : arm/CMakeFiles/roscpp_generate_messages_py.dir/depend
 
