@@ -13,6 +13,7 @@ import trash_item
 
 BELT_SPEED = 1
 CONFIDENCE_THRESHOLD = 10
+Y_THRESHOLD = 100
 
 class Camera:
 	
@@ -43,9 +44,10 @@ class Camera:
 		new_trash_items = self.classifier.classify(ros_image)
 
 		# update previously detected trash item list with belt speed
-		# TODO: remove trash past a given y value
 		for trash in self.trash_items:
 			trash.y += BELT_SPEED
+			if trash.y > Y_THRESHOLD:
+				self.trash_items.remove(trash)
 		
 		# check if any new trash objects match existing trash objects
 		for new_trash in new_trash_items:
@@ -71,7 +73,7 @@ class Camera:
 
 
 	def send_target_location(self, pixel, ros_image):
-		depth_image = self.bridge.imgmsg_to_cv2(self.raw_image, "passthrough")
+		depth_image = self.bridge.imgmsg_to_cv2(ros_image, "passthrough")
 
 		x = int(pixel.x)
 		y = int(pixel.y)

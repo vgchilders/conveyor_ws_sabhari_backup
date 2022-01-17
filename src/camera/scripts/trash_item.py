@@ -3,20 +3,23 @@ IOU_THRESHOLD = .5
 
 class TrashItem:
 
-    def __init__(self, x, y, width, height, conf):
+    def __init__(self, x, y, width, height, trash_type, conf):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.trash_type = trash_type
         self.conf = conf
     
     def compare_item(self, new_item: TrashItem):
-        return self.calc_iou(self.get_bounding_box(self), self.get_bounding_box(new_item)) > IOU_THRESHOLD
+        return self.calc_iou(self.get_bounding_box(self), self.get_bounding_box(new_item)) > IOU_THRESHOLD and self.trash_type == new_item.trash_type
             
-    
     def update_item(self, new_item: TrashItem):
-        # TODO: implement this
-        return
+        self.x = round((self.x + new_item.x) / 2)
+        self.y = round((self.y + new_item.y) / 2)
+        self.width = round((self.width + new_item.width) / 2)
+        self.height = round((self.height + new_item.height) / 2)
+        self.conf += new_item.conf
 
     def get_bounding_box(item: TrashItem):
         x1 = self.x - round(self.width / 2)
