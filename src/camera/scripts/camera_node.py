@@ -1,5 +1,4 @@
 import random
-from camera.scripts.object_detection_model import ObjectDetectionModel
 import rospy
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image, CameraInfo
@@ -8,8 +7,9 @@ import numpy as np
 import cv2
 import pyrealsense2 as rs
 from arm.srv import stepper_srv
-import object_detection_model
+import object_detection_model as odm
 import trash_item
+import message_filters
 
 BELT_SPEED = 1
 CONFIDENCE_THRESHOLD = 10
@@ -21,11 +21,14 @@ class Camera:
 		self.cameraInfo = CameraInfo()
 		self.bridge = CvBridge()
 		self.trash_items = []
-		self.classifier = ObjectDetectionModel()
+		self.classifier = odm.ObjectDetectionModel()
 
 		# Subscribers
-		self.raw_sub = rospy.Subscriber("/camera/aligned_depth_to_color/image_raw",
-						Image, callback=self.new_image_recieved, queue_size=1)
+		self.depth_img_sub = message_filters.Subscriber("/camera/aligned_depth_to_color/image_raw", Image)
+		self.color_img_sub = message_filters.Subscriber("/camera/color/image_raw", Image)
+		ts = message_filters.TimeSynchronizer([self.depth_img_sub, self.color_img_sub], 1)
+		ts.registerCallback(self.new_image_recieved)
+
 		rospy.Subscriber("/camera/aligned_depth_to_color/camera_info",
 						CameraInfo, callback=self.update_camera_info, queue_size=1)
 
@@ -34,20 +37,27 @@ class Camera:
 
 		# Publishers
 		self.target_location_pub = rospy.Publisher("/target_location", Pose, queue_size=1)
+
+		print("Camera Init")
 	
 
 	def update_camera_info(self, caminfo):
 		self.cameraInfo = caminfo
 
-	def new_image_recieved(self, ros_image):
+	def new_image_recieved(self, depth_image, color_img):
+		cv_image = self.bridge.imgmsg_to_cv2(color_img, "bgr8")
+		print("New image!")
+
 		# find trash objects in image
-		new_trash_items = self.classifier.classify(ros_image)
+		new_trash_items = self.classifier.classify(cv_image)
+		print("new items: {0}".format(len(new_trash_items)))
 
 		# update previously detected trash item list with belt speed
 		for trash in self.trash_items:
 			trash.y += BELT_SPEED
 			if trash.y > Y_THRESHOLD:
 				self.trash_items.remove(trash)
+		print("Updated old list")
 		
 		# check if any new trash objects match existing trash objects
 		for new_trash in new_trash_items:
@@ -57,6 +67,7 @@ class Camera:
 					break
 			else:
 				self.trash_items.append(new_trash)
+		print("Updated new list")
 
 		# select confident trash item closest to the arm (the one with the highest y pos)
 		target_trash = None
@@ -65,19 +76,20 @@ class Camera:
 			if trash.conf > CONFIDENCE_THRESHOLD and trash.y > curr_y:
 				target_trash = trash
 				curr_y = trash.y
+		print("Select trash")
 
 		# convert & send target position to arm
 		if target_trash:
 			target_pixel = [target_trash.x, target_trash.y]
-			self.send_target_location(target_pixel, ros_image)
+			self.send_target_location(target_pixel, depth_image)
 
 
 	def send_target_location(self, pixel, ros_image):
-		depth_image = self.bridge.imgmsg_to_cv2(ros_image, "passthrough")
+		cv_image = self.bridge.imgmsg_to_cv2(ros_image, "passthrough")
 
 		x = int(pixel.x)
 		y = int(pixel.y)
-		z = depth_image[y, x]
+		z = cv_image[y, x]
 
 		location = self.depth_to_pos(x, y, z, self.cameraInfo)
 
