@@ -1,2 +1,2 @@
 arm:camera:gui
--DCATKIN_DEVEL_PREFIX=/home/recycling-robot-mqp/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/recycling-robot-mqp/ros_ws/install -G Unix Makefiles
+-DCATKIN_DEVEL_PREFIX=/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel -DCMAKE_INSTALL_PREFIX=/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install -G Unix Makefiles

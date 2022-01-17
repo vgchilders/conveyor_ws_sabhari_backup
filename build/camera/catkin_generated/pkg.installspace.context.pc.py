@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "".split(';') if "" != "" else []
 PROJECT_CATKIN_DEPENDS = "roscpp;rospy;std_msgs;message_generation".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "camera"
-PROJECT_SPACE_DIR = "/home/recycling-robot-mqp/ros_ws/install"
+PROJECT_SPACE_DIR = "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install"
 PROJECT_VERSION = "0.0.0"

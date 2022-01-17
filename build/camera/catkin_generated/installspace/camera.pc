@@ -1,4 +1,4 @@
-prefix=/home/recycling-robot-mqp/ros_ws/install
+prefix=/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install
 
 Name: camera
 Description: Description of camera

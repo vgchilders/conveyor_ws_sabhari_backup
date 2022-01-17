@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/recycling-robot-mqp/ros_ws/devel/setup.sh
+    local-name: /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/setup.sh
