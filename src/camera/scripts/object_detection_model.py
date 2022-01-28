@@ -2,6 +2,13 @@ import trash_item as ti
 import detectron2
 import numpy as np
 import torch
+import torchvision
+from torchvision.utils import draw_bounding_boxes
+import matplotlib.pyplot as plt
+import torchvision.transforms.functional as F
+import tensorflow as tf
+import cv2 as cv2
+
 
 # import cv2
 # from detectron2 import model_zoo
@@ -42,7 +49,7 @@ class ObjectDetectionModel:
     #     self.predictor = DefaultPredictor(cfg)
 
     def init_yolo_v5(self):
-        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/yolo_lab_data_aug.pt')
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/best.pt')
         #self.model = torch.hub.load('weights/custom_yolov5s.yaml', 'custom', path='weights/yolo_lab_data_aug.pt', source='local')
 
     def classify(self, image):
@@ -75,9 +82,11 @@ class ObjectDetectionModel:
         results = self.model([image])
         predictions = []
 
-        results.print()
-        print(results.pandas().xyxy)
-        print(results.pandas().xyxy[0])
+        # results.print()
+        # print(results.pandas().xyxy)
+        # print(results.pandas().xyxy[0])
+
+        bounding_boxes = []
 
         for i, trash in results.pandas().xyxy[0].iterrows():
             x = round((int(trash[2]) + int(trash[0]))/2)
@@ -88,5 +97,29 @@ class ObjectDetectionModel:
             new_trash_item = ti.TrashItem(x, y, width, height, trash[5], float(trash[4]))
             predictions.append(new_trash_item)
 
+            # cv2.rectangle(image,(int(trash[0]), int(trash[1])),(int(trash[2]), int(trash[3])),(200,0,0),2)
+
+            bounding_boxes.append([int(trash[0]), int(trash[0]), int(trash[0]), int(trash[0])])
+
         # print(predictions)
+        # print(type(image))
+        # print(torch.from_numpy(image))
+        # image_bb = draw_bounding_boxes(torch.from_numpy(image), torch.tensor(bounding_boxes, dtype=torch.int32), width=4)
+        
+        # image_bb = torchvision.transforms.ToPILImage()(image_bb)
+        # image_bb.show()
+
+        # cv2.imshow('img',image)
+        # cv2.waitKey(0)   
+
         return predictions
+
+    def show(self, imgs):
+        if not isinstance(imgs, list):
+            imgs = [imgs]
+        fix, axs = plt.subplots(ncols=len(imgs), squeeze=False)
+        for i, img in enumerate(imgs):
+            img = img.detach()
+            img = F.to_pil_image(img)
+            axs[0, i].imshow(np.asarray(img))
+            axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])

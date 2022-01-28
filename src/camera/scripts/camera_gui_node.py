@@ -21,12 +21,12 @@ import pyrealsense2 as rs
 from arm.srv import stepper_srv
 import object_detection_model as odm
 
-BELT_SPEED = 1
+BELT_SPEED = 5
 CONFIDENCE_THRESHOLD = 10
-Y_THRESHOLD = 100
+Y_THRESHOLD = 400
 
 class Camera:
-    def init(self):
+    def __init__(self):
         self.cameraInfo = CameraInfo()
         self.bridge = CvBridge()
         self.trash_items = []
@@ -89,8 +89,8 @@ class Camera:
     def send_target_location(self, pixel, ros_image):
         cv_image = self.bridge.imgmsg_to_cv2(ros_image, "passthrough")
 
-        x = int(pixel.x)
-        y = int(pixel.y)
+        x = int(pixel[0])
+        y = int(pixel[1])
         z = cv_image[y, x]
 
         location = self.depth_to_pos(x, y, z, self.cameraInfo)
@@ -111,13 +111,13 @@ class Camera:
         y = 0
         
         belt_diam = 3.175;
-        belt_circumfrence = 2 * np.pi (belt_diam/2)
+        belt_circumfrence = 2 * np.pi * (belt_diam/2)
 
         x_stepper= round((x*20)/belt_circumfrence)
         y_stepper= round((y*20)/belt_circumfrence)
 
         print("Moving X,Y-Axis to ",x_stepper, ",",y_stepper)
-        self.srv_set_xy_axis(x_stepper,y_stepper)
+        # self.srv_set_xy_axis(x_stepper,y_stepper)
 
 
     def depth_to_pos(self, x, y, depth, cameraInfo):
@@ -138,8 +138,8 @@ class Camera:
         #return -result[0]+398, result[1]+283.423+120, result[2]
 
 class DLabel(QLabel):
-    def init(self, parent=None):
-        super(DLabel, self).init(parent)
+    def __init__(self, parent=None):
+        super(DLabel, self).__init__(parent)
         self.parent = parent
         self.start = QPoint()
         self.end = QPoint()
@@ -148,16 +148,19 @@ class DLabel(QLabel):
     def paintEvent(self, event):
         qp = QPainter(self)
 
+        pn = QPen(Qt.black, 4, Qt.SolidLine)
+
+        qp.setPen(pn)
+
         if(self.pixmap != None):
             qp.drawPixmap(self.rect(), self.pixmap)
 
         if(self.parent.state == 1):
-            br = QBrush(QColor(100, 10, 10, 40))
-            qp.setBrush(br)
             qp.drawRect(QRect(self.start, self.end))
 
         for trash_item in self.parent.camera.trash_items_shown:
-            qp.drawRect(trash_item.x - int(trash_item.width/2), trash_item.y - int(trash_item.height/2), trash_item.width, trash_item.height)
+            qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
+            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(trash_item.trash_type))
 
     def mousePressEvent(self, event):
         if(self.parent.state == 0):
@@ -168,8 +171,11 @@ class DLabel(QLabel):
 
     def mouseMoveEvent(self, event):
         if(self.parent.state == 1):
+            print(self.parent.state)
             self.end = event.pos()
             self.update()
+        else:
+            pass
 
     def mouseReleaseEvent(self, event):
         if(self.parent.state == 1):
@@ -178,6 +184,7 @@ class DLabel(QLabel):
             self.update()
 
     def make_trash_item(self):
+        # TODO clicking without moving errors
         if(self.start.x() == self.end.x() or self.start.y() == self.end.y()):
             return None
         
@@ -195,28 +202,26 @@ class DLabel(QLabel):
             h = self.end.y() - self.start.y()
             y = self.end.y() - h/2
 
-        return trash_item(x, y, w, h, None, 100)
+        # TODO implement setting trash type
+        return trash_item.TrashItem(x/self.parent.scale_w, y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, 0, 100)
 
     def updatePixmap(self, pixmap):
         self.pixmap = pixmap
         self.update()
 
 class TWindow(QMainWindow):
-    def init(self, app):
-        super().init()
+    def __init__(self, parent = None):
+        super().__init__(parent)
 
-        # Subcribers
-        self.depth_img_sub = message_filters.Subscriber("/camera/aligned_depth_to_color/image_raw", Image)
-        self.color_img_sub = message_filters.Subscriber("/camera/color/image_raw", Image)
-        ts = message_filters.TimeSynchronizer([self.depth_img_sub, self.color_img_sub], 1)
-        ts.registerCallback(self.new_image_recieved)
+        print("TWindow init")
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
-        rospy.Subscriber("/camera/aligned_depth_to_color/camera_info", CameraInfo, callback=self.update_camera_info, queue_size=1)
-
-        # Self objects
+       # Self objects
         self.camera = Camera()
         self.screen = app.primaryScreen()
         self.state = 0
+        self.scale_w = 0
+        self.scale_h = 0
 
         # Create GUI objects
         self.setGeometry(0, 0, self.screen.size().width(), self.screen.size().height())
@@ -229,17 +234,22 @@ class TWindow(QMainWindow):
         self.start_button = QPushButton("Start", self)
         self.start_button.setGeometry(50, 50, 150, 50)
         self.start_button.move(int(self.screen.size().width()) - int((self.start_button.size().width()*.25)/2), 50)
-        self.button.clicked.connect(self.start)
+        self.start_button.clicked.connect(self.start)
 
         self.stop_button = QPushButton("Stop", self)
         self.stop_button.setGeometry(50, 50, 150, 50)
-        self.start_button.move(int(self.screen.size().width()) - int((self.stop_button.size().width()*.25)/2), 150)
-        self.button.clicked.connect(self.stop)
+        self.stop_button.move(int(self.screen.size().width()) - int((self.stop_button.size().width()*.25)/2), 150)
+        self.stop_button.clicked.connect(self.stop)
 
         self.dlabel_pixmap = DLabel(self)
 
-        # Show GUI
-        self.show()
+         # Subcribers
+        self.depth_img_sub = message_filters.Subscriber("/camera/aligned_depth_to_color/image_raw", Image)
+        self.color_img_sub = message_filters.Subscriber("/camera/color/image_raw", Image)
+        ts = message_filters.TimeSynchronizer([self.depth_img_sub, self.color_img_sub], 1)
+        ts.registerCallback(self.new_image_recieved)
+
+        rospy.Subscriber("/camera/aligned_depth_to_color/camera_info", CameraInfo, callback=self.update_camera_info, queue_size=1)
 
     def new_image_recieved(self, depth_image, color_img):
         cv_image = self.camera.new_image_recieved(depth_image, color_img)
@@ -248,8 +258,8 @@ class TWindow(QMainWindow):
             pixmap = self.cv_image_to_pixmap(cv_image)
             self.camera.trash_items_shown = self.camera.trash_items
             self.dlabel_pixmap.updatePixmap(pixmap)
-            self.dlable_pixmap.resize(pixmap.width(), pixmap.height())
-            self.dlable_pixmap.move(int(self.screen.size().width()/2) - int(self.imagepixmap.width()/2), 50)
+            self.dlabel_pixmap.resize(pixmap.width(), pixmap.height())
+            self.dlabel_pixmap.move(int(self.screen.size().width()/2) - int(pixmap.width()/2), 50)
 
     def update_camera_info(self, caminfo):
         self.camera.update_camera_info(caminfo)
@@ -259,7 +269,11 @@ class TWindow(QMainWindow):
         h, w, ch = rgb_image.shape
         bytes_per_line = ch * w
         pixmap = QPixmap.fromImage(QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888))
-        scaled_pixmap = pixmap.scaled((self.screen.size().width() - int(self.screen.size().width() * .25)), (self.screen.size().height() - int(self.screen.size().height() * .25)), Qt.KeepAspectRatio)
+        self.scale_w = (self.screen.size().width() - (self.screen.size().width() * .25))/pixmap.width()
+        self.scale_h = (self.screen.size().height() - (self.screen.size().height() * .25))/pixmap.height()
+        scaled_pixmap = pixmap.scaled(pixmap.width() * self.scale_w, pixmap.height() * self.scale_h, Qt.KeepAspectRatio)
+        self.scale_w = scaled_pixmap.width()/pixmap.width()
+        self.scale_h = scaled_pixmap.height()/pixmap.height()
         return scaled_pixmap
 
     def start(self):
@@ -268,14 +282,15 @@ class TWindow(QMainWindow):
     def stop(self):
         pass
 
-if name == 'main':
+if __name__ == '__main__':
 
     # Init ros
     rospy.init_node('camera', anonymous=True)
 
     # Init GUI
     app = QApplication(sys.argv)
-    win = TWindow(app)
+    win = TWindow()
+    win.show()
 
     # Spin
     app.exec()
