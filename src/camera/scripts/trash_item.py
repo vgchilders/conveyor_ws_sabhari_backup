@@ -1,3 +1,5 @@
+from geometry_msgs.msg import Pose
+
 
 IOU_THRESHOLD = .5
 
@@ -10,6 +12,7 @@ class TrashItem:
         self.height = height
         self.trash_type = trash_type
         self.conf = conf
+        self.pose = Pose()
     
     def compare_item(self, new_item):
         return self.calc_iou(self.get_bounding_box(), new_item.get_bounding_box()) > IOU_THRESHOLD and self.trash_type == new_item.trash_type
