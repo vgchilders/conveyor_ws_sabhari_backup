@@ -33,7 +33,7 @@ class DLabel(QLabel):
     def paintEvent(self, event):
         qp = QPainter(self)
 
-        pn = QPen(Qt.black, 4, Qt.SolidLine)
+        pn = QPen(Qt.green, 4, Qt.SolidLine)
 
         qp.setPen(pn)
 
@@ -45,7 +45,7 @@ class DLabel(QLabel):
 
         for trash_item in self.parent.camera.trash_items_shown:
             qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
-            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(trash_item.trash_type))
+            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(trash_item.trash_type)+" "+str(int(trash_item.conf)))
 
     def mousePressEvent(self, event):
         if(self.parent.state == 0):

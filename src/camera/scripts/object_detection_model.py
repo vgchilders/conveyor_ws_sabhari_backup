@@ -49,7 +49,8 @@ class ObjectDetectionModel:
     #     self.predictor = DefaultPredictor(cfg)
 
     def init_yolo_v5(self):
-        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/best.pt')
+        #device=torch.device("cpu")
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/best.pt')#.to(device)
         #self.model = torch.hub.load('weights/custom_yolov5s.yaml', 'custom', path='weights/yolo_lab_data_aug.pt', source='local')
 
     def classify(self, image):

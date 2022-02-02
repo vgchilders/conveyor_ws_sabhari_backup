@@ -11,9 +11,9 @@ import object_detection_model as odm
 import trash_item
 import message_filters
 
-BELT_SPEED = 5
+BELT_SPEED = 14
 CONFIDENCE_THRESHOLD = 10
-X_THRESHOLD = 400
+X_THRESHOLD = 640
 
 class Camera:
     def __init__(self):
@@ -62,10 +62,10 @@ class Camera:
         # select confident trash item closest to the arm (the one with the highest y pos)
         target_trash = None
         curr_y = 0
-        depth_image = self.bridge.imgmsg_to_cv2(color_img, "passthrough")
+        cv_depth_image = self.bridge.imgmsg_to_cv2(depth_image, "passthrough")
         for trash in self.trash_items:
             if trash.conf > CONFIDENCE_THRESHOLD:
-                self.update_trash_location(trash, depth_image)
+                self.update_trash_location(trash, cv_depth_image)
                 if trash.y > curr_y:
                     target_trash = trash
                     curr_y = trash.y
@@ -74,21 +74,22 @@ class Camera:
 
         # convert & send target position to arm
         if target_trash:
-            target_pixel = [target_trash.x, target_trash.y]
-            self.send_target_location(target_pixel, depth_image)
+            self.send_target_location(target_trash)
 
         return cv_image
 
 
     def send_target_location(self, target):
+        
         self.target_location_pub.publish(target.pose)
-        self.move_arm(target.y, target.x)
-
+    
     def update_trash_location(self, trash, depth_image):
         x = int(trash.x)
         y = int(trash.y)
         if y < len(depth_image) and x < len(depth_image[0]):
            z = depth_image[y, x]
+
+           print("[{0},{1},{2}]".format(x, y, z))
 
            location = self.depth_to_pos(x, y, z, self.cameraInfo)
 
@@ -97,19 +98,6 @@ class Camera:
            trash.pose.position.y = location[0]
            trash.pose.position.z = location[2]
 
-    def move_arm(self, x, y):
-        
-        # Arm Y always set to 0 for now
-        y = 0
-        
-        belt_diam = 3.175
-        belt_circumfrence = 2 * np.pi * (belt_diam/2)
-
-        x_stepper= round((x*20)/belt_circumfrence)
-        y_stepper= round((y*20)/belt_circumfrence)
-
-        print("Moving X,Y-Axis to ",x_stepper, ",",y_stepper)
-        # self.srv_set_xy_axis(x_stepper,y_stepper)
 
 
     def depth_to_pos(self, x, y, depth, cameraInfo):

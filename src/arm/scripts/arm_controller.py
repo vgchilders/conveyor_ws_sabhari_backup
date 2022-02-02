@@ -57,12 +57,12 @@ class Dynamixel:
     def __init__(self,Link1_ID,Link2_ID,Gripper_ID):
         self.link_a = DynamixelMotor(Link1_ID, dynamixelPortHandler, dynamixelPacketHandler)
         self.link_b = DynamixelMotor(Link2_ID, dynamixelPortHandler, dynamixelPacketHandler)
-        self.gripper = DynamixelMotor(Gripper_ID, dynamixelPortHandler, dynamixelPacketHandler)
+        # self.gripper = DynamixelMotor(Gripper_ID, dynamixelPortHandler, dynamixelPacketHandler)
 
         # Enable torque
         self.link_a.enable_torque()  
         self.link_b.enable_torque()  
-        self.gripper.enable_torque()
+        # self.gripper.enable_torque()
 
         self.setup_services()
         self.setup_publishers()
@@ -75,7 +75,7 @@ class Dynamixel:
 
     def setup_publishers(self):
         self.pub_z_axis = rospy.Publisher('/arm/z_axis', Float64, queue_size=1)
-        self.pub_gripper = rospy.Publisher('/arm/gripper', Float64, queue_size=1)
+        # self.pub_gripper = rospy.Publisher('/arm/gripper', Float64, queue_size=1)
 
     def handle_z_axis(self,req):
         input = req.data
@@ -90,12 +90,12 @@ class Dynamixel:
         return True
 
     def handle_gripper(self,req):
-        input = req.data
-        input = max(self.gripper_min,input); input = min(self.gripper_max,input)
-        gripper_val = self.gripper_start + \
-                      (self.gripper_end-self.gripper_start)*input/(self.gripper_max-self.gripper_min)
-        while not self.gripper.set_goal_position(int(gripper_val)): pass
-        self.pub_gripper.publish(int(input))
+        # input = req.data
+        # input = max(self.gripper_min,input); input = min(self.gripper_max,input)
+        # gripper_val = self.gripper_start + \
+        #               (self.gripper_end-self.gripper_start)*input/(self.gripper_max-self.gripper_min)
+        # while not self.gripper.set_goal_position(int(gripper_val)): pass
+        # self.pub_gripper.publish(int(input))
         return True
 
 class Teensy:
@@ -109,10 +109,11 @@ class Teensy:
 
     def setup_services(self):
         rospy.Service('arm/xy_axis_set', stepper_srv, self.handle_xy_axis)
-    
+
     def setup_publishers(self):
         self.pub_xy_axis = rospy.Publisher('/arm/xy_axis', String, queue_size=1)
     
+
     def handle_xy_axis(self,req):
         data = "<-99,-99>"; x = 0; y = 0 # Default values for homing
         if(not(req.data1 == -99 and req.data2 == -99)):

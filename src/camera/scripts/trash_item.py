@@ -18,10 +18,14 @@ class TrashItem:
         return self.calc_iou(self.get_bounding_box(), new_item.get_bounding_box()) > IOU_THRESHOLD and self.trash_type == new_item.trash_type
             
     def update_item(self, new_item):
-        self.x = round((self.x + new_item.x) / 2)
-        self.y = round((self.y + new_item.y) / 2)
-        self.width = round((self.width + new_item.width) / 2)
-        self.height = round((self.height + new_item.height) / 2)
+        self.x = new_item.x
+        self.y = new_item.y
+        self.width = new_item.width
+        self.height = new_item.height
+        # self.x = round((self.x + new_item.x) / 2)
+        # self.y = round((self.y + new_item.y) / 2)
+        # self.width = round((self.width + new_item.width) / 2)
+        # self.height = round((self.height + new_item.height) / 2)
         self.conf += new_item.conf
 
     def get_bounding_box(self):
