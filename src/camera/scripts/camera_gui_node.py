@@ -79,7 +79,7 @@ class DLabel(QLabel):
 
     def mouseReleaseEvent(self, event):
         if(self.parent.state == 1):
-            pop_up = annotationPopUp()
+            pop_up = annotationPopUp(self.start.x(), self.start.y())
             if(pop_up.label != -1):
                 self.parent.camera.trash_items.append(
                     self.make_trash_item(pop_up.label))
@@ -185,12 +185,17 @@ class TWindow(QMainWindow):
 
 
 class annotationPopUp(QWidget):
-    def __init__(self):
+    def __init__(self, x, y):
         super().__init__()
         self.label = 0
+        self.width = 640
+        self.height = 480
+        self.left = x + 10
+        self.top = y + 10
         self.initUI()
 
     def initUI(self):
+        self.setGeometry(self.left, self.top, self.width, self.height)
         classes = ['Cardboard', 'Metal', 'Rigid Plastic', 'Soft Plastic']
         label, labelDone = QInputDialog.getItem(
             self, 'Input Dialog', 'Select a class:', classes)
