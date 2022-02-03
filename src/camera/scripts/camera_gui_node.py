@@ -29,12 +29,13 @@ class DLabel(QLabel):
         self.start = QPoint()
         self.end = QPoint()
         self.pixmap = None
+        self.recycling_types = ['Cardboard',
+                                'Metal', 'Rigid Plastic', 'Soft Plastic']
 
     def paintEvent(self, event):
         qp = QPainter(self)
-
-        pn = QPen(Qt.green, 4, Qt.SolidLine)
-
+        qp.setFont(QFont("Helvetica [Cronyx]", 14))
+        pn = QPen(Qt.black, 3, Qt.SolidLine)
         qp.setPen(pn)
 
         if(self.pixmap != None):
@@ -44,8 +45,22 @@ class DLabel(QLabel):
             qp.drawRect(QRect(self.start, self.end))
 
         for trash_item in self.parent.camera.trash_items_shown:
+            qp.setPen(self.getPen(trash_item.trash_type))
             qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
-            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(trash_item.trash_type)+" "+str(int(trash_item.conf)))
+            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(self.recycling_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
+
+    def getPen(self, type):
+        thickness = 3
+        print(type)
+        if(type == 0):
+            pn = QPen(Qt.green, thickness, Qt.SolidLine)
+        elif(type == 1):
+            pn = QPen(Qt.yellow, thickness, Qt.SolidLine)
+        elif(type == 2):
+            pn = QPen(Qt.magenta, thickness, Qt.SolidLine)
+        else:
+            pn = QPen(Qt.cyan, thickness, Qt.SolidLine)
+        return pn
 
     def mousePressEvent(self, event):
         if(self.parent.state == 0):
@@ -64,11 +79,14 @@ class DLabel(QLabel):
 
     def mouseReleaseEvent(self, event):
         if(self.parent.state == 1):
-            self.parent.camera.trash_items.append(self.make_trash_item())
+            pop_up = annotationPopUp()
+            if(pop_up.label != -1):
+                self.parent.camera.trash_items.append(
+                    self.make_trash_item(pop_up.label))
             self.parent.state = 0
             self.update()
 
-    def make_trash_item(self):
+    def make_trash_item(self, label):
         # TODO clicking without moving errors
         if(self.start.x() == self.end.x() or self.start.y() == self.end.y()):
             return None
@@ -86,9 +104,7 @@ class DLabel(QLabel):
         else:
             h = self.end.y() - self.start.y()
             y = self.end.y() - h/2
-
-        # TODO implement setting trash type
-        return trash_item.TrashItem(x/self.parent.scale_w, y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, 0, 100)
+        return trash_item.TrashItem(x/self.parent.scale_w, y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, label, 100)
 
     def updatePixmap(self, pixmap):
         self.pixmap = pixmap
@@ -166,6 +182,22 @@ class TWindow(QMainWindow):
 
     def stop(self):
         pass
+
+
+class annotationPopUp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.label = 0
+        self.initUI()
+
+    def initUI(self):
+        classes = ['Cardboard', 'Metal', 'Rigid Plastic', 'Soft Plastic']
+        label, labelDone = QInputDialog.getItem(
+            self, 'Input Dialog', 'Select a class:', classes)
+        if labelDone:
+            self.label = classes.index(label)
+        else:
+            self.label = -1
 
 if __name__ == '__main__':
 
