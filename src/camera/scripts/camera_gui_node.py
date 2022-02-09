@@ -47,8 +47,9 @@ class DLabel(QLabel):
         if(self.parent.state == 1):
             qp.drawRect(QRect(self.start, self.end))
 
+        print(self.parent.camera.trash_items_shown)
         for trash_item in self.parent.camera.trash_items_shown:
-            qp.setPen(self.getPen(trash_item.trash_type), trash_item.conf)
+            qp.setPen(self.getPen(trash_item.trash_type, trash_item.conf))
             qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
             qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
 

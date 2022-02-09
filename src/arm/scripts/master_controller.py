@@ -4,7 +4,7 @@ from geometry_msgs.msg import Pose
 from arm.srv import stepper_srv
 from time import sleep
 import numpy as np
-BELT_SPEED_CM_SEC = 8.369565217
+BELT_SPEED_MM_SEC = 83.369565217/2
 ARM_PICKUP_TIME = 1
 RETURN_TIME=2
 class Master():
@@ -16,23 +16,23 @@ class Master():
     def wait_for_object(self,req):
         if self.running == False:
             self.running = True
-        
-        self.move_arm(req.position.x,req.position.y)
-        #print(str(req.position.y/BELT_SPEED_CM_SEC)-ARM_PICKUP_TIME))
-        #sleep((req.position.y/BELT_SPEED_CM_SEC)-ARM_PICKUP_TIME)
-        sleep(15000)
-        #pickup
+            print(req)
+            self.move_arm(req.position.x,req.position.y)
+            print((req.position.y/BELT_SPEED_MM_SEC)-ARM_PICKUP_TIME)
+            sleep((req.position.y/BELT_SPEED_MM_SEC)-ARM_PICKUP_TIME)
+            # sleep(15000)
+            #pickup
 
-        self.move_arm(0,0)
-        sleep(RETURN_TIME)
-        #Let go of object
+            self.move_arm(0,0)
+            sleep(RETURN_TIME)
+            #Let go of object
 
 
-        self.running= False
+            self.running= False
     def move_arm(self, x, y):
         
         # Arm Y always set to 0 for now
-        y = 0
+        y = 10
         
         belt_diam = 3.175
         belt_circumfrence = 2 * np.pi * (belt_diam/2)
