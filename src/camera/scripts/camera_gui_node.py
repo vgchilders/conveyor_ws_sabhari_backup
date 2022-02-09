@@ -181,15 +181,22 @@ class TWindow(QMainWindow):
         )) - int(self.start_button.size().height()) - 150)
         self.stop_button.clicked.connect(self.stop)
 
-        self.dlabel_pixmap = DLabel(self)
+        self.dlabel_pixmap = DLabel(self)        
+        self.pub_home = rospy.Publisher("/home", Int32)
 
-         # Subcribers
+    def setup_subscribers(self):
         self.depth_img_sub = message_filters.Subscriber("/camera/aligned_depth_to_color/image_raw", Image)
         self.color_img_sub = message_filters.Subscriber("/camera/color/image_raw", Image)
         ts = message_filters.TimeSynchronizer([self.depth_img_sub, self.color_img_sub], 1)
         ts.registerCallback(self.new_image_recieved)
 
-        rospy.Subscriber("/camera/aligned_depth_to_color/camera_info", CameraInfo, callback=self.update_camera_info, queue_size=1)
+        self.camera_info = rospy.Subscriber("/camera/aligned_depth_to_color/camera_info", CameraInfo, callback=self.update_camera_info, queue_size=1)
+
+    def unsubscribe(self):
+        self.depth_img_sub.unregister()
+        self.color_img_sub.unregister()
+        self.camera_info.unregister()
+
 
     def new_image_recieved(self, depth_image, color_img):
         cv_image = self.camera.new_image_recieved(depth_image, color_img)
@@ -217,12 +224,12 @@ class TWindow(QMainWindow):
         return scaled_pixmap
 
     def start(self):
-        #TODO add start button code
-        pass
+        print("Homing X,Y,Z Axes")
+        self.pub_home(Int32())
+        self.setup_subscribers()
 
     def stop(self):
-        #TODO add stop button code
-        pass
+        self.unsubscribe()
 
 
 class annotationPopUp(QWidget):

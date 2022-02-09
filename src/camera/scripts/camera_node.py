@@ -22,6 +22,9 @@ class Camera:
         self.trash_items = []
         self.trash_items_shown = []
         self.classifier = odm.ObjectDetectionModel()
+        self.no_trash = Pose()
+        self.no_trash.position.x = -1
+        self.no_trash.position.y = -1
 
         # Services
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
@@ -75,6 +78,8 @@ class Camera:
         # convert & send target position to arm
         if target_trash:
             self.send_target_location(target_trash)
+        else:
+            self.send_target_location(self.no_trash)
 
         return cv_image
 
