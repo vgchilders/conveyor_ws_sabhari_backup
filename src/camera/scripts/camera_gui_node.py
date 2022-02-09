@@ -1,9 +1,12 @@
 import sys
 import random as rd
 import numpy as np
+import math
+import time
 
 import trash_item
 from camera_node import Camera
+from annotation_popup import CreateAnnotationPopUp, EditAnnotationPopUp
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore    import *
@@ -29,12 +32,12 @@ class DLabel(QLabel):
         self.start = QPoint()
         self.end = QPoint()
         self.pixmap = None
-        self.recycling_types = ['Cardboard',
+        self.trash_types = ['Cardboard',
                                 'Metal', 'Rigid Plastic', 'Soft Plastic']
 
     def paintEvent(self, event):
         qp = QPainter(self)
-        qp.setFont(QFont("Helvetica [Cronyx]", 14))
+        qp.setFont(QFont("Helvetica", 14))
         pn = QPen(Qt.black, 3, Qt.SolidLine)
         qp.setPen(pn)
 
@@ -45,21 +48,21 @@ class DLabel(QLabel):
             qp.drawRect(QRect(self.start, self.end))
 
         for trash_item in self.parent.camera.trash_items_shown:
-            qp.setPen(self.getPen(trash_item.trash_type))
+            qp.setPen(self.getPen(trash_item.trash_type), trash_item.conf)
             qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
-            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(self.recycling_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
+            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
 
-    def getPen(self, type):
+    def getPen(self, type, conf):
         thickness = 3
-        print(type)
+        opacity = min(max(50, int((conf/100)*255)), 255)
         if(type == 0):
-            pn = QPen(Qt.green, thickness, Qt.SolidLine)
+            pn = QPen(QColor(0, 255, 0, opacity), thickness, Qt.SolidLine)
         elif(type == 1):
-            pn = QPen(Qt.yellow, thickness, Qt.SolidLine)
+            pn = QPen(QColor(255, 255, 0, opacity), thickness, Qt.SolidLine)
         elif(type == 2):
-            pn = QPen(Qt.magenta, thickness, Qt.SolidLine)
+            pn = QPen(QColor(255, 0, 255, opacity), thickness, Qt.SolidLine)
         else:
-            pn = QPen(Qt.cyan, thickness, Qt.SolidLine)
+            pn = QPen(QColor(0, 255, 255, opacity), thickness, Qt.SolidLine)
         return pn
 
     def mousePressEvent(self, event):
@@ -79,12 +82,25 @@ class DLabel(QLabel):
 
     def mouseReleaseEvent(self, event):
         if(self.parent.state == 1):
-            pop_up = annotationPopUp(self.start.x(), self.start.y())
-            if(pop_up.label != -1):
-                self.parent.camera.trash_items.append(
-                    self.make_trash_item(pop_up.label))
+            if(self.start.x() == self.end.x() and self.start.y() == self.end.y()):
+                bbox = self.checkForBBox(self.start.x(), self.start.y())
+                if(bbox is not None):
+                    # TODO highlight selected box (or stop displaying all other boxes)
+                    pop_up = EditAnnotationPopUp(
+                        bbox, self.parent.camera.trash_items)
+
+            else:
+                start_time = time.time()
+                pop_up = CreateAnnotationPopUp(self.start.x(), self.start.y())
+                if(pop_up.label != -1):
+                    self.updateXYForTime(round(time.time()-start_time, 3))
+                    self.parent.camera.trash_items.append(
+                        self.make_trash_item(pop_up.label))
             self.parent.state = 0
             self.update()
+
+    def updateXYForTime(self, time):
+        print("time: ", time, " s")
 
     def make_trash_item(self, label):
         # TODO clicking without moving errors
@@ -104,11 +120,29 @@ class DLabel(QLabel):
         else:
             h = self.end.y() - self.start.y()
             y = self.end.y() - h/2
-        return trash_item.TrashItem(x/self.parent.scale_w, y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, label, 100)
+        return trash_item.TrashItem(x/self.parent.scale_w, y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, label, 100, True)
 
     def updatePixmap(self, pixmap):
         self.pixmap = pixmap
         self.update()
+
+    def checkForBBox(self, mouse_x, mouse_y):
+        x1, y1, x2, y2 = 0, 0, 0, 0
+        smallest_size = math.inf
+        selected_trash = None
+        for trash_item in self.parent.camera.trash_items_shown:
+            x1 = (trash_item.x - int(trash_item.width/2)) * self.parent.scale_w
+            y1 = (trash_item.y - int(trash_item.height/2)) * \
+                self.parent.scale_h
+            x2 = (trash_item.x + int(trash_item.width/2)) * self.parent.scale_w
+            y2 = (trash_item.y + int(trash_item.height/2)) * \
+                self.parent.scale_h
+            if(mouse_x > x1 and mouse_x < x2 and mouse_y > y1 and mouse_y < y2):
+                area = trash_item.width*trash_item.height
+                if(area < smallest_size):
+                    smallest_size = area
+                    selected_trash = trash_item
+        return selected_trash
 
 class TWindow(QMainWindow):
     def __init__(self, parent = None):
@@ -133,13 +167,17 @@ class TWindow(QMainWindow):
         image_label.move(int(self.screen.size().width()/2) - int(image_label.size().width()/2), 10)
 
         self.start_button = QPushButton("Start", self)
-        self.start_button.setGeometry(50, 50, 150, 50)
-        self.start_button.move(int(self.screen.size().width()) - int((self.start_button.size().width()*.25)/2), 50)
+        self.start_button.setGeometry(0, 0, 150, 50)
+        self.start_button.move(int(self.screen.size().width(
+        )/2) - int((self.start_button.size().width())), int(self.screen.size().height(
+        )) - int(self.start_button.size().height()) - 150)
         self.start_button.clicked.connect(self.start)
 
         self.stop_button = QPushButton("Stop", self)
         self.stop_button.setGeometry(50, 50, 150, 50)
-        self.stop_button.move(int(self.screen.size().width()) - int((self.stop_button.size().width()*.25)/2), 150)
+        self.stop_button.move(int(self.screen.size().width(
+        )/2) + int((self.start_button.size().width())), int(self.screen.size().height(
+        )) - int(self.start_button.size().height()) - 150)
         self.stop_button.clicked.connect(self.stop)
 
         self.dlabel_pixmap = DLabel(self)
@@ -178,9 +216,11 @@ class TWindow(QMainWindow):
         return scaled_pixmap
 
     def start(self):
+        #TODO add start button code
         pass
 
     def stop(self):
+        #TODO add stop button code
         pass
 
 

@@ -73,7 +73,7 @@ class ObjectDetectionModel:
     #         width = XYXY_box[2] - XYXY_box[0]
     #         height = XYXY_box[3] - XYXY_box[1]
             
-    #         new_trash_item = ti.TrashItem(x, y, width, height, classes[i], scores[i])
+    #         new_trash_item = ti.TrashItem(x, y, width, height, classes[i], scores[i], False)
     #         predictions.append(new_trash_item)
 
     #     # print(predictions)
@@ -95,7 +95,7 @@ class ObjectDetectionModel:
             width = int(trash[2]) - int(trash[0])
             height = int(trash[3]) - int(trash[1])
             
-            new_trash_item = ti.TrashItem(x, y, width, height, trash[5], float(trash[4]))
+            new_trash_item = ti.TrashItem(x, y, width, height, trash[5], float(trash[4]), False)
             predictions.append(new_trash_item)
 
             # cv2.rectangle(image,(int(trash[0]), int(trash[1])),(int(trash[2]), int(trash[3])),(200,0,0),2)
