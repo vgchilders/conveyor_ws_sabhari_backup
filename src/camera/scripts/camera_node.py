@@ -10,8 +10,8 @@ from arm.srv import stepper_srv
 import object_detection_model as odm
 import trash_item
 import message_filters
+import time
 
-BELT_SPEED = 14
 CONFIDENCE_THRESHOLD = 10
 X_THRESHOLD = 640
 
@@ -25,6 +25,7 @@ class Camera:
         self.no_trash = Pose()
         self.no_trash.position.x = -1
         self.no_trash.position.y = -1
+        self.belt_speed = 14
 
         # Services
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
@@ -47,19 +48,30 @@ class Camera:
 
         # update previously detected trash item list with belt speed
         for trash in self.trash_items:
-            trash.x += BELT_SPEED
+            trash.x += self.belt_speed
             if trash.x > X_THRESHOLD:
                 self.trash_items.remove(trash)
         print("Updated old list")
 
         # check if any new trash objects match existing trash objects
+        num_x, total_x = 0
         for new_trash in new_trash_items:
             for existing_trash in self.trash_items:
                 if new_trash.compare_item(existing_trash):
-                    existing_trash.update_item(new_trash)
+                    total_x += existing_trash.update_item(new_trash) + self.belt_speed
+                    num_x += 1
                     break
             else:
                 self.trash_items.append(new_trash)
+        
+        # Recaculate belt speed
+        if hasattr(self, 'prev_time'):
+            avg_x = total_x / num_x
+            delta_t = time.time() - self.prev_time
+            self.belt_speed = avg_x / delta_t
+        self.prev_time = time.time()
+        
+
         print("Updated new list")
 
         # select confident trash item closest to the arm (the one with the highest y pos)

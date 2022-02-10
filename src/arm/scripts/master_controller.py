@@ -9,8 +9,14 @@ from arm_controller import Dynamixel
 from std_msgs.msg import Int32
 
 BELT_SPEED_MM_SEC = 83.369565217/2
+
 ARM_PICKUP_TIME = 1
-RETURN_TIME=2
+RETURN_TIME = 2
+MOVE_ARM_TIME = .5
+GRAB_TIME = .5
+
+ARM_UP = 0
+ARM_DOWN = 15
 
 
 class Master():
@@ -32,15 +38,30 @@ class Master():
         print(wait_time)
 
         if (wait_time - ARM_PICKUP_TIME < 0):
+            # Move to object
             self.move_arm(req.position.x,req.position.y)
             sleep(wait_time)
 
-            # TODO: pickup
+            # Arm down
+            self.srv_set_z_axis(ARM_DOWN)
+            sleep(MOVE_ARM_TIME)
 
+            # Grip object
+            self.srv_set_gripper(Dynamixel.gripper_max)
+            sleep(GRAB_TIME)
+
+            # Arm up
+            self.srv_set_z_axis(ARM_UP)
+            sleep(MOVE_ARM_TIME)
+
+            # Move to dropoff
             self.move_arm(0,0)
             sleep(RETURN_TIME)
             
-            # TODO: Let go of object
+            # Let go of object
+            self.srv_set_gripper(Dynamixel.gripper_min)
+            sleep(GRAB_TIME)
+
 
 
     def move_arm(self, x, y):
