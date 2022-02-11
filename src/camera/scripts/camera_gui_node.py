@@ -49,13 +49,14 @@ class DLabel(QLabel):
 
         print(self.parent.camera.trash_items_shown)
         for trash_item in self.parent.camera.trash_items_shown:
-            qp.setPen(self.getPen(trash_item.trash_type, trash_item.conf))
-            qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
-            qp.drawText(int((trash_item.x - (trash_item.width/2)) * self.parent.scale_w), int(trash_item.y - (trash_item.height/2) - 1) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
+            if trash_item.conf > 2:
+                qp.setPen(self.getPen(trash_item.trash_type, trash_item.conf))
+                qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
+                qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, ((trash_item.y - int(trash_item.height/2)) - 1) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
 
     def getPen(self, type, conf):
         thickness = 3
-        opacity = min(max(50, int((conf/100)*255)), 255)
+        opacity = min(max(100, int((conf/10)*255)), 255)
         if(type == 0):
             pn = QPen(QColor(0, 255, 0, opacity), thickness, Qt.SolidLine)
         elif(type == 1):
@@ -182,7 +183,7 @@ class TWindow(QMainWindow):
         self.stop_button.clicked.connect(self.stop)
 
         self.dlabel_pixmap = DLabel(self)        
-        self.pub_home = rospy.Publisher("/home", Int32)
+        self.pub_home = rospy.Publisher("/home", Int32, queue_size=1)
 
     def setup_subscribers(self):
         self.depth_img_sub = message_filters.Subscriber("/camera/aligned_depth_to_color/image_raw", Image)
@@ -225,7 +226,7 @@ class TWindow(QMainWindow):
 
     def start(self):
         print("Homing X,Y,Z Axes")
-        self.pub_home(Int32())
+        self.pub_home.publish(Int32())
         self.setup_subscribers()
 
     def stop(self):

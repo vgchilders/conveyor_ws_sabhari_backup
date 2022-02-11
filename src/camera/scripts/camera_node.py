@@ -11,10 +11,11 @@ import object_detection_model as odm
 import trash_item
 import message_filters
 import time
-
+import warnings
+warnings.filterwarnings("ignore")
 CONFIDENCE_THRESHOLD = 10
 X_THRESHOLD = 640
-
+FPS_TARGET = 5
 class Camera:
     def __init__(self):
         self.cameraInfo = CameraInfo()
@@ -25,7 +26,7 @@ class Camera:
         self.no_trash = Pose()
         self.no_trash.position.x = -1
         self.no_trash.position.y = -1
-        self.belt_speed = 14
+        self.belt_speed = 15
 
         # Services
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
@@ -39,37 +40,42 @@ class Camera:
         self.cameraInfo = caminfo
 
     def new_image_recieved(self, depth_image, color_img):
+        start_time=time.time()
         cv_image = self.bridge.imgmsg_to_cv2(color_img, "bgr8")
         print("New image!")
 
         # find trash objects in image
         new_trash_items = self.classifier.classify(cv_image)
         print("new items: {0}".format(len(new_trash_items)))
-
+        fps= 1/(time.time()-start_time)
         # update previously detected trash item list with belt speed
         for trash in self.trash_items:
-            trash.x += self.belt_speed
+            trash.x += (self.belt_speed * FPS_TARGET)/fps
             if trash.x > X_THRESHOLD:
                 self.trash_items.remove(trash)
         print("Updated old list")
 
         # check if any new trash objects match existing trash objects
-        num_x, total_x = 0
+        num_x, total_x = 0, 0
         for new_trash in new_trash_items:
             for existing_trash in self.trash_items:
                 if new_trash.compare_item(existing_trash):
-                    total_x += existing_trash.update_item(new_trash) + self.belt_speed
-                    num_x += 1
+                    temp_x = existing_trash.update_item(new_trash) + (self.belt_speed * FPS_TARGET)/fps
+                    print("temp x = {0}".format(temp_x))
+                    if existing_trash.conf > CONFIDENCE_THRESHOLD and not existing_trash.updated:
+                        total_x += temp_x
+                        num_x += 1
                     break
             else:
                 self.trash_items.append(new_trash)
         
         # Recaculate belt speed
-        if hasattr(self, 'prev_time'):
-            avg_x = total_x / num_x
-            delta_t = time.time() - self.prev_time
-            self.belt_speed = avg_x / delta_t
-        self.prev_time = time.time()
+        # if num_x > 0:
+        #     avg_x = total_x / num_x
+        #     self.belt_speed = (avg_x+(self.belt_speed * FPS_TARGET)/fps)/2
+
+        print("Belt tspeed: {0}".format((self.belt_speed * FPS_TARGET)/fps))
+        print("time: {0}".format(1/(time.time()-start_time)))
         
 
         print("Updated new list")
@@ -89,16 +95,16 @@ class Camera:
 
         # convert & send target position to arm
         if target_trash:
-            self.send_target_location(target_trash)
+            self.send_target_location(target_trash.pose)
         else:
             self.send_target_location(self.no_trash)
 
         return cv_image
 
 
-    def send_target_location(self, target):
+    def send_target_location(self, target_pose):
         
-        self.target_location_pub.publish(target.pose)
+        self.target_location_pub.publish(target_pose)
     
     def update_trash_location(self, trash, depth_image):
         x = int(trash.x)
