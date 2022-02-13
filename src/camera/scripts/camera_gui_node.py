@@ -34,11 +34,13 @@ class DLabel(QLabel):
         self.pixmap = None
         self.trash_types = ['Cardboard',
                                 'Metal', 'Rigid Plastic', 'Soft Plastic']
+        self.selected_trash_item = None
 
     def paintEvent(self, event):
         qp = QPainter(self)
         qp.setFont(QFont("Helvetica", 14))
-        pn = QPen(Qt.black, 3, Qt.SolidLine)
+        pn = QPen(Qt.green, 3, Qt.SolidLine)
+        qp.setBrush(Qt.NoBrush)
         qp.setPen(pn)
 
         if(self.pixmap != None):
@@ -50,9 +52,23 @@ class DLabel(QLabel):
         print(self.parent.camera.trash_items_shown)
         for trash_item in self.parent.camera.trash_items_shown:
             if trash_item.conf > 2:
-                qp.setPen(self.getPen(trash_item.trash_type, trash_item.conf))
-                qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2)) * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
-                qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, ((trash_item.y - int(trash_item.height/2)) - 1) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
+                self.drawTrashItem(trash_item, qp)
+ 
+        if(self.selected_trash_item is not None):
+            self.highlightBox(self.selected_trash_item, qp)
+
+    def drawTrashItem(self, trash_item, qp):
+        text_height = 25
+        qp.setBrush(Qt.NoBrush)
+        qp.setPen(self.getPen(trash_item.trash_type, trash_item.conf))
+        qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2))
+                    * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
+        if((trash_item.y - int(trash_item.height/2)) > text_height + 5):
+            qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2) - 1)
+                        * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
+        else:
+            qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y + int(trash_item.height/2) +
+                                                                                         text_height) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
 
     def getPen(self, type, conf):
         thickness = 3
@@ -85,15 +101,17 @@ class DLabel(QLabel):
     def mouseReleaseEvent(self, event):
         if(self.parent.state == 1):
             if(self.start.x() == self.end.x() and self.start.y() == self.end.y()):
-                bbox = self.checkForBBox(self.start.x(), self.start.y())
-                if(bbox is not None):
-                    # TODO highlight selected box (or stop displaying all other boxes)
+                self.selected_trash_item = self.checkForBBox(
+                    self.start.x(), self.start.y())
+                if(self.selected_trash_item is not None):
+                    self.update()
                     pop_up = EditAnnotationPopUp(
-                        bbox, self.parent.camera.trash_items)
-
+                        self.selected_trash_item, self.parent.camera.trash_items, self.getGlobalPos(self.selected_trash_item))
+                    self.selected_trash_item = None
             else:
                 start_time = time.time()
-                pop_up = CreateAnnotationPopUp(self.start.x(), self.start.y())
+                pop_up = CreateAnnotationPopUp(
+                    self.start.x(), self.start.y(), self.getGlobalPos())
                 if(pop_up.label != -1):
                     self.updateXYForTime(round(time.time()-start_time, 3))
                     self.parent.camera.trash_items.append(
@@ -118,7 +136,7 @@ class DLabel(QLabel):
         
         if(self.start.y() > self.end.y()):
             h = self.start.y() - self.end.y()
-            y = self.start.y() - w/2
+            y = self.start.y() - h/2
         else:
             h = self.end.y() - self.start.y()
             y = self.end.y() - h/2
@@ -127,6 +145,31 @@ class DLabel(QLabel):
     def updatePixmap(self, pixmap):
         self.pixmap = pixmap
         self.update()
+
+    def getGlobalPos(self, trash_item=None):
+        # Calculates where to place pop-up
+        buffer = 15
+        x0 = self.parent.pixmap_initial_x
+        y0 = 50 + 12
+        z = 1
+        if(trash_item is None):
+            y_offset = (self.end.y()+self.start.y())/2
+            if(self.end.x() > self.start.x()):
+                x_offset = self.end.x()+buffer
+            else:
+                x_offset = self.end.x()-buffer
+                z = -1
+            return [x0+x_offset, y_offset+y0, z]
+        else:
+            y_offset = trash_item.y*self.parent.scale_h
+            if(self.start.x() < trash_item.x*self.parent.scale_w):
+                x_offset = (trash_item.x - int(trash_item.width/2)) * \
+                    self.parent.scale_w-buffer
+                z = -1
+            else:
+                x_offset = (trash_item.x + int(trash_item.width/2)
+                            ) * self.parent.scale_w+buffer
+            return [x0+x_offset, y_offset+y0, z]
 
     def checkForBBox(self, mouse_x, mouse_y):
         x1, y1, x2, y2 = 0, 0, 0, 0
@@ -146,10 +189,35 @@ class DLabel(QLabel):
                     selected_trash = trash_item
         return selected_trash
 
+    def highlightBox(self, trash_item, qp):
+        background_opacity = 175
+        x0, x1 = (trash_item.x - int(trash_item.width/2)) * \
+            self.parent.scale_w, (trash_item.x +
+                                  int(trash_item.width/2))*self.parent.scale_w
+        y0, y1 = (trash_item.y - int(trash_item.height/2)) * \
+            self.parent.scale_h, (trash_item.y +
+                                  int(trash_item.height/2))*self.parent.scale_h
+
+        qp.setBrush(
+            QBrush(QColor(0, 0, 0, background_opacity), Qt.SolidPattern))
+        qp.setPen(Qt.NoPen)
+
+        path = QPainterPath()
+        path.setFillRule(Qt.WindingFill)
+        # (x, y, width, height)
+        path.addRect(0, 0, x0, self.pixmap.height())
+        path.addRect(x1, 0, self.pixmap.width() - x1, self.pixmap.height())
+        path.addRect(x0, 0, trash_item.width *
+                     self.parent.scale_w, y0)
+        path.addRect(x0, y1,
+                     trash_item.width*self.parent.scale_w+1, self.pixmap.height() - y1)
+        qp.drawPath(path.simplified())
+
+        self.drawTrashItem(trash_item, qp)
+
 class TWindow(QMainWindow):
     def __init__(self, parent = None):
         super().__init__(parent)
-
         print("TWindow init")
         self.setAttribute(Qt.WA_DeleteOnClose)
 
@@ -159,6 +227,7 @@ class TWindow(QMainWindow):
         self.state = 0
         self.scale_w = 0
         self.scale_h = 0
+        self.pixmap_initial_x = 0
 
         # Create GUI objects
         self.setGeometry(0, 0, self.screen.size().width(), self.screen.size().height())
@@ -207,7 +276,8 @@ class TWindow(QMainWindow):
             self.camera.trash_items_shown = self.camera.trash_items
             self.dlabel_pixmap.updatePixmap(pixmap)
             self.dlabel_pixmap.resize(pixmap.width(), pixmap.height())
-            self.dlabel_pixmap.move(int(self.screen.size().width()/2) - int(pixmap.width()/2), 50)
+            self.pixmap_initial_x = int(self.screen.size().width()/2) - int(pixmap.width()/2)
+            self.dlabel_pixmap.move(self.pixmap_initial_x, 50)
 
     def update_camera_info(self, caminfo):
         self.camera.update_camera_info(caminfo)
@@ -231,27 +301,6 @@ class TWindow(QMainWindow):
 
     def stop(self):
         self.unsubscribe()
-
-
-class annotationPopUp(QWidget):
-    def __init__(self, x, y):
-        super().__init__()
-        self.label = 0
-        self.width = 640
-        self.height = 480
-        self.left = x + 10
-        self.top = y + 10
-        self.initUI()
-
-    def initUI(self):
-        self.setGeometry(self.left, self.top, self.width, self.height)
-        classes = ['Cardboard', 'Metal', 'Rigid Plastic', 'Soft Plastic']
-        label, labelDone = QInputDialog.getItem(
-            self, 'Input Dialog', 'Select a class:', classes)
-        if labelDone:
-            self.label = classes.index(label)
-        else:
-            self.label = -1
 
 if __name__ == '__main__':
 
