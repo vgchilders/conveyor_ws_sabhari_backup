@@ -39,6 +39,14 @@ class CreateAnnotationPopUp(QDialog):
         self.c1.toggled.connect(lambda: self.btnstate(self.c1))
         self.c2.toggled.connect(lambda: self.btnstate(self.c2))
         self.c3.toggled.connect(lambda: self.btnstate(self.c3))
+        self.c0_shortcut = QShortcut(QKeySequence('1'), self)
+        self.c0_shortcut.activated.connect(self.shortcutc0)
+        self.c1_shortcut = QShortcut(QKeySequence('2'), self)
+        self.c1_shortcut.activated.connect(self.shortcutc1)
+        self.c2_shortcut = QShortcut(QKeySequence('3'), self)
+        self.c2_shortcut.activated.connect(self.shortcutc2)
+        self.c3_shortcut = QShortcut(QKeySequence('4'), self)
+        self.c3_shortcut.activated.connect(self.shortcutc3)
 
         buttonBox = QDialogButtonBox(self)
         buttonBox.setStandardButtons(
@@ -57,6 +65,22 @@ class CreateAnnotationPopUp(QDialog):
     def btnstate(self, b):
         if b.isChecked() == True:
             self.label = self.classes.index(b.text())
+
+    def shortcutc0(self):
+        self.c0.click()
+        self.accept()
+
+    def shortcutc1(self):
+        self.c1.click()
+        self.accept()
+
+    def shortcutc2(self):
+        self.c2.click()
+        self.accept()
+
+    def shortcutc3(self):
+        self.c3.click()
+        self.accept()
 
 
 class EditAnnotationPopUp(QDialog):
@@ -99,29 +123,15 @@ class EditAnnotationPopUp(QDialog):
         self.c1.toggled.connect(lambda: self.btnstate(self.c1))
         self.c2.toggled.connect(lambda: self.btnstate(self.c2))
         self.c3.toggled.connect(lambda: self.btnstate(self.c3))
+        self.c0_shortcut = QShortcut(QKeySequence('1'), self)
+        self.c0_shortcut.activated.connect(self.shortcutc0)
+        self.c1_shortcut = QShortcut(QKeySequence('2'), self)
+        self.c1_shortcut.activated.connect(self.shortcutc1)
+        self.c2_shortcut = QShortcut(QKeySequence('3'), self)
+        self.c2_shortcut.activated.connect(self.shortcutc2)
+        self.c3_shortcut = QShortcut(QKeySequence('4'), self)
+        self.c3_shortcut.activated.connect(self.shortcutc3)
 
-        # # Create slider to boost confidence
-        # self.text2 = QLabel()
-        # self.text2.setText(
-        #     'Adjust confidence 0-100%')
-        # verticalLayout.addWidget(self.text2)
-        # self.slider = QSlider(Qt.Horizontal)
-        # self.slider.setMinimum(0)
-        # self.slider.setMaximum(100)
-        # self.slider.setValue(self.trash_item.conf)
-        # # self.slider.setTickPosition(QSlider.TicksBelow)
-        # # self.slider.setTickInterval(10)
-        # min_label = QLabel(self, alignment=Qt.AlignLeft)
-        # min_label.setText("0")
-        # max_label = QLabel(self, alignment=Qt.AlignRight)
-        # max_label.setText("100")
-        # self.slider.valueChanged.connect(self.valuechange)
-        # verticalLayout.addWidget(self.slider)
-        # slider_hbox = QHBoxLayout()
-        # slider_hbox.addWidget(min_label, Qt.AlignLeft)
-        # slider_hbox.addWidget(max_label, Qt.AlignRight)
-        # slider_hbox.addStretch()
-        # verticalLayout.addLayout(slider_hbox)
 
         buttonBox = QDialogButtonBox(self)
         buttonBox.setStandardButtons(
@@ -131,7 +141,7 @@ class EditAnnotationPopUp(QDialog):
         buttonBox.rejected.connect(self.reject)
 
         self.boost_btn = QPushButton("Boost Confidence")
-        self.boost_shortcut = QShortcut(QKeySequence('b'), self)
+        self.boost_shortcut = QShortcut(QKeySequence('Space'), self)
         self.boost_shortcut.activated.connect(self.shortcutboost)
         self.boost_btn.clicked.connect(self.btnboost)
         verticalLayout.addWidget(self.boost_btn)
@@ -149,6 +159,8 @@ class EditAnnotationPopUp(QDialog):
                 if self.trash_item in self.trash_items:
                     self.trash_items.remove(self.trash_item)
             else:
+                if(self.trash_item.trash_type != self.updated_label):
+                    self.updated_conf = 100
                 self.trash_item.trash_type = self.updated_label
                 self.trash_item.conf = self.updated_conf
                 self.trash_item.updated = True
@@ -175,3 +187,20 @@ class EditAnnotationPopUp(QDialog):
     def shortcutboost(self):
         self.updated_conf = 100
         self.accept()
+
+    def shortcutc0(self):
+        self.c0.click()
+        self.accept()
+
+    def shortcutc1(self):
+        self.c1.click()
+        self.accept()
+
+    def shortcutc2(self):
+        self.c2.click()
+        self.accept()
+
+    def shortcutc3(self):
+        self.c3.click()
+        self.accept()
+

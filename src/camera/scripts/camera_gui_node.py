@@ -236,6 +236,20 @@ class TWindow(QMainWindow):
         image_label = QLabel(self)
         image_label.setText("Camera Feed")
         image_label.move(int(self.screen.size().width()/2) - int(image_label.size().width()/2), 10)
+        image_label.setFont(QFont("Helvetica", 14))
+        image_label.setFixedSize(200, 50)
+
+        short_label = QLabel(self)
+        short_label.setText("Shortcuts")
+        short_label.move(25, 50)
+        short_label.setFont(QFont("Helvetica", 14))
+        short_label.setFixedSize(200, 25)
+        shortcut_label = QLabel(self)
+        shortcut_label.setText(
+            "1 - Cardboard \n2 - Metal\n3 - Rigid Plastic \n4 - Soft Plastic\nSpace - Boost Confidence\nDelete - Delete Annotation")
+        shortcut_label.move(25, 60)
+        shortcut_label.setFixedSize(200, 150)
+        shortcut_label.setFont(QFont("Helvetica", 11))        
 
         self.start_button = QPushButton("Start", self)
         self.start_button.setGeometry(0, 0, 150, 50)
