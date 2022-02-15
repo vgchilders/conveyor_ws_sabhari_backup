@@ -109,18 +109,15 @@ class DLabel(QLabel):
                         self.selected_trash_item, self.parent.camera.trash_items, self.getGlobalPos(self.selected_trash_item))
                     self.selected_trash_item = None
             else:
-                start_time = time.time()
+                self.parent.camera.delta_x_sum = 0
                 pop_up = CreateAnnotationPopUp(
                     self.start.x(), self.start.y(), self.getGlobalPos())
                 if(pop_up.label != -1):
-                    self.updateXYForTime(round(time.time()-start_time, 3))
+
                     self.parent.camera.trash_items.append(
                         self.make_trash_item(pop_up.label))
             self.parent.state = 0
             self.update()
-
-    def updateXYForTime(self, time):
-        print("time: ", time, " s")
 
     def make_trash_item(self, label):
         # TODO clicking without moving errors
@@ -140,7 +137,7 @@ class DLabel(QLabel):
         else:
             h = self.end.y() - self.start.y()
             y = self.end.y() - h/2
-        return trash_item.TrashItem(x/self.parent.scale_w, y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, label, 100, True)
+        return trash_item.TrashItem(x/self.parent.scale_w+self.parent.camera.delta_x_sum, y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, label, 100, True)
 
     def updatePixmap(self, pixmap):
         self.pixmap = pixmap

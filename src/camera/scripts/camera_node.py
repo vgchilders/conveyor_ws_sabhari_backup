@@ -27,6 +27,7 @@ class Camera:
         self.no_trash.position.x = -1
         self.no_trash.position.y = -1
         self.belt_speed = 15
+        self.delta_x_sum = 0
 
         # Services
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
@@ -49,8 +50,10 @@ class Camera:
         print("new items: {0}".format(len(new_trash_items)))
         fps= 1/(time.time()-start_time)
         # update previously detected trash item list with belt speed
+        delta_x = (self.belt_speed * FPS_TARGET)/fps
+        self.delta_x_sum+=delta_x
         for trash in self.trash_items:
-            trash.x += (self.belt_speed * FPS_TARGET)/fps
+            trash.x += delta_x
             if trash.x > X_THRESHOLD:
                 self.trash_items.remove(trash)
         print("Updated old list")
