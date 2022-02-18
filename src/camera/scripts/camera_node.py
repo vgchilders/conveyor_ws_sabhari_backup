@@ -28,6 +28,7 @@ class Camera:
         self.no_trash.position.y = -1
         self.belt_speed = 15
         self.delta_x_sum = 0
+        self.start_time = time.time()
 
         # Services
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
@@ -40,15 +41,20 @@ class Camera:
     def update_camera_info(self, caminfo):
         self.cameraInfo = caminfo
 
+    def get_delta_x(self):
+        fps= 1/(time.time()-self.start_time)
+        delta_x = (self.belt_speed * FPS_TARGET)/fps
+        return self.delta_x_sum + delta_x
+
     def new_image_recieved(self, depth_image, color_img):
-        start_time=time.time()
+        self.start_time=time.time()
         cv_image = self.bridge.imgmsg_to_cv2(color_img, "bgr8")
         print("New image!")
 
         # find trash objects in image
         new_trash_items = self.classifier.classify(cv_image)
         print("new items: {0}".format(len(new_trash_items)))
-        fps= 1/(time.time()-start_time)
+        fps= 1/(time.time()-self.start_time)
         # update previously detected trash item list with belt speed
         delta_x = (self.belt_speed * FPS_TARGET)/fps
         self.delta_x_sum+=delta_x
@@ -78,7 +84,7 @@ class Camera:
         #     self.belt_speed = (avg_x+(self.belt_speed * FPS_TARGET)/fps)/2
 
         print("Belt tspeed: {0}".format((self.belt_speed * FPS_TARGET)/fps))
-        print("time: {0}".format(1/(time.time()-start_time)))
+        print("time: {0}".format(1/(time.time()-self.start_time)))
         
 
         print("Updated new list")
@@ -97,7 +103,7 @@ class Camera:
         print("Select trash")
 
         # convert & send target position to arm
-        if target_trash:
+        if target_trash and target_trash.trash_type == 0:
             self.send_target_location(target_trash.pose)
         else:
             self.send_target_location(self.no_trash)
