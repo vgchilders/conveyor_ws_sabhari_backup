@@ -252,21 +252,21 @@ class TWindow(QMainWindow):
         self.start_button = QPushButton("Start", self)
         self.start_button.setGeometry(0, 0, 150, 50)
         self.start_button.move(int(self.screen.size().width(
-        )/2) - int((self.start_button.size().width())), int(self.screen.size().height(
+        )/2) - 3*int(self.start_button.size().width()/2)-10, int(self.screen.size().height(
         )) - int(self.start_button.size().height()) - 150)
         self.start_button.clicked.connect(self.start)
 
         self.stop_button = QPushButton("Stop", self)
         self.stop_button.setGeometry(50, 50, 150, 50)
         self.stop_button.move(int(self.screen.size().width(
-        )/2) + int((self.start_button.size().width())), int(self.screen.size().height(
+        )/2) - int(self.start_button.size().width()/2), int(self.screen.size().height(
         )) - int(self.start_button.size().height()) - 150)
         self.stop_button.clicked.connect(self.stop)
 
         self.pause_button = QPushButton("Pause", self)
         self.pause_button.setGeometry(50, 50, 150, 50)
         self.pause_button.move(int(self.screen.size().width(
-        )/2) + 2*int((self.start_button.size().width())), int(self.screen.size().height(
+        )/2) + int(self.start_button.size().width()/2)+10, int(self.screen.size().height(
         )) - int(self.start_button.size().height()) - 150)
         self.pause_button.clicked.connect(self.pause)
         self.pause_shortcut = QShortcut(QKeySequence('Space'), self)
