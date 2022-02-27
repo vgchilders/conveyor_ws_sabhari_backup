@@ -86,10 +86,10 @@ class DLabel(QLabel):
     def mousePressEvent(self, event):
         if(self.parent.state == 0):
             self.parent.state = 1
-            self.start = event.pos()
-            self.end = event.pos()
-            self.parent.camera.delta_x_sum = 0
-            self.update()
+        self.start = event.pos()
+        self.end = event.pos()
+        self.parent.camera.delta_x_sum = 0
+        self.update()
 
     def mouseMoveEvent(self, event):
         if(self.parent.state == 1):
@@ -263,6 +263,15 @@ class TWindow(QMainWindow):
         )) - int(self.start_button.size().height()) - 150)
         self.stop_button.clicked.connect(self.stop)
 
+        self.pause_button = QPushButton("Pause", self)
+        self.pause_button.setGeometry(50, 50, 150, 50)
+        self.pause_button.move(int(self.screen.size().width(
+        )/2) + 2*int((self.start_button.size().width())), int(self.screen.size().height(
+        )) - int(self.start_button.size().height()) - 150)
+        self.pause_button.clicked.connect(self.pause)
+        self.pause_shortcut = QShortcut(QKeySequence('Space'), self)
+        self.pause_shortcut.activated.connect(self.shortcutpause)
+
         self.dlabel_pixmap = DLabel(self)        
         self.pub_home = rospy.Publisher("/home", Int32, queue_size=1)
 
@@ -314,6 +323,14 @@ class TWindow(QMainWindow):
     def stop(self):
         self.unsubscribe()
 
+    def pause(self):
+        if (self.state == 0):
+            self.state = 1
+        else:
+            self.state = 0
+
+    def shortcutpause(self):
+        self.pause_button.click()
 if __name__ == '__main__':
 
     # Init ros
