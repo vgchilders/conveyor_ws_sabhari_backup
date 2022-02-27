@@ -114,7 +114,11 @@ class DynamixelMotor:
 		if result != Communication.COMM_SUCCESS:
 			rospy.logerr(("dynamixel #%d > " % self.id) + self.packetHandler.getTxRxResult(result))
 		elif error != 0:
-			rospy.logerr(("dynamixel #%d > " % self.id) + self.packetHandlerHandler.getRxPacketError(error))
+			rospy.logerr(("dynamixel #%d > " % self.id) + self.packetHandler.getRxPacketError(error))
+			dxl_error_message, dxl_comm_result, dxl_error = self.packetHandler.read1ByteTxRx(self.portHandler, self.id, 70)
+			print(dxl_error_message)
+			print(dxl_comm_result)
+			print(dxl_error)
 		else:
 			return True
 

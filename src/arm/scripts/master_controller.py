@@ -7,6 +7,7 @@ from time import sleep
 import numpy as np
 from arm_controller import Dynamixel
 from std_msgs.msg import Int32
+from arm.srv import dynamixel_srv, stepper_srv
 
 BELT_SPEED_MM_SEC = 83.369565217/2
 
@@ -26,7 +27,7 @@ class Master():
     
     def setup_services(self):
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
-        # self.srv_set_z_axis = rospy.ServiceProxy('arm/z_axis_set', dynamixel_srv)
+        self.srv_set_z_axis = rospy.ServiceProxy('arm/z_axis_set', dynamixel_srv)
         # self.srv_set_gripper = rospy.ServiceProxy('arm/gripper_set', dynamixel_srv)
     
     def setup_subscribers(self):
@@ -43,16 +44,16 @@ class Master():
             sleep(wait_time)
 
             # Arm down
-            # self.srv_set_z_axis(ARM_DOWN)
-            # sleep(MOVE_ARM_TIME)
+            self.srv_set_z_axis(ARM_DOWN)
+            sleep(MOVE_ARM_TIME)
 
             # Grip object
             # self.srv_set_gripper(Dynamixel.gripper_max)
             # sleep(GRAB_TIME)
 
             # Arm up
-            # self.srv_set_z_axis(ARM_UP)
-            # sleep(MOVE_ARM_TIME)
+            self.srv_set_z_axis(ARM_UP)
+            sleep(MOVE_ARM_TIME)
 
             # Move to dropoff
             self.move_arm(0,0)
@@ -80,7 +81,7 @@ class Master():
     
     def home_robot(self, req):
         print("Homing X,Y,Z Axes")
-        # self.srv_set_z_axis(Dynamixel.z_axis_min)
+        self.srv_set_z_axis(Dynamixel.z_axis_min)
         # self.srv_set_gripper(Dynamixel.gripper_min)
         self.srv_set_xy_axis(-99,-99)
 

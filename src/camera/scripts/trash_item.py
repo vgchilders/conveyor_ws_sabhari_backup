@@ -17,7 +17,7 @@ class TrashItem:
         self.pose = Pose()
     
     def compare_item(self, new_item):
-        return self.calc_iou(self.get_bounding_box(), new_item.get_bounding_box()) > IOU_THRESHOLD and self.trash_type == new_item.trash_type
+        return self.calc_iou(self.get_bounding_box(), new_item.get_bounding_box()) > IOU_THRESHOLD
             
     def update_item(self, new_item):
         delta_x = new_item.x - self.x

@@ -69,11 +69,12 @@ class Camera:
         for new_trash in new_trash_items:
             for existing_trash in self.trash_items:
                 if new_trash.compare_item(existing_trash):
-                    temp_x = existing_trash.update_item(new_trash) + (self.belt_speed * FPS_TARGET)/fps
-                    print("temp x = {0}".format(temp_x))
-                    if existing_trash.conf > CONFIDENCE_THRESHOLD and not existing_trash.updated:
-                        total_x += temp_x
-                        num_x += 1
+                    if (new_trash.trash_type == existing_trash.trash_type):
+                        temp_x = existing_trash.update_item(new_trash) + (self.belt_speed * FPS_TARGET)/fps
+                        print("temp x = {0}".format(temp_x))
+                        if existing_trash.conf > CONFIDENCE_THRESHOLD and not existing_trash.updated:
+                            total_x += temp_x
+                            num_x += 1
                     break
             else:
                 self.trash_items.append(new_trash)
