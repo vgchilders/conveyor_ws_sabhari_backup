@@ -2,10 +2,11 @@ from geometry_msgs.msg import Pose
 from statistics import variance
 
 
-IOU_THRESHOLD = .5
+IOU_THRESHOLD = 0.5
+INITIAL_ERROR = 0.5 #initial value for kalman error of the estimate & error of measurement
 class KalmanParameters:
     def __init__(self):
-        self.e_est = 0.5 #pick some initial value between 0 and 1
+        self.e_est = INITIAL_ERROR 
         self.est = None
         self.measurements = []
 
@@ -28,7 +29,10 @@ class TrashItem:
         if(kp.est is None):
             kp.est = mea
         kp.measurements.append(mea)
-        kp.e_mea = variance(kp.measurements)
+        if len(kp.measurements == 1):
+            kp.e_mea = INITIAL_ERROR
+        else:
+            kp.e_mea = variance(kp.measurements)
         kg = e_est/(e_est + e_mea)
         kp.est = est + kg*(mea - kp.est)
         kp.e_est = (1-kg)*kp.e_est
