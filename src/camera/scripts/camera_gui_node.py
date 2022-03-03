@@ -64,7 +64,7 @@ class DLabel(QLabel):
         qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2))
                     * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
         #Draw center estimate
-        qp.drawPoint(trash_item.kp_x.est*self.parent.scale_w, trash_item.y*self.parent.scale_h)
+        qp.drawPoint(trash_item.x*self.parent.scale_w, trash_item.kp_y.est*self.parent.scale_h)
         if((trash_item.y - int(trash_item.height/2)) > text_height + 5):
             qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2) - 1)
                         * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))

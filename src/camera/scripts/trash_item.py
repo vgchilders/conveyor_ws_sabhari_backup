@@ -21,7 +21,7 @@ class TrashItem:
         self.updated = updated
         self.pose = Pose()
         self.kp_conf = KalmanParameters()
-        self.kp_x = KalmanParameters()
+        self.kp_y = KalmanParameters()
 
     
     def update_kalman(self, mea, kp):
@@ -39,8 +39,8 @@ class TrashItem:
             
     def update_item(self, new_item):
         delta_x = new_item.x - self.x
-        self.update_kalman(new_item.x, self.kp_x)
         self.x = new_item.x
+        self.update_kalman(new_item.y, self.kp_y)
         self.y = new_item.y
         self.width = new_item.width
         self.height = new_item.height
