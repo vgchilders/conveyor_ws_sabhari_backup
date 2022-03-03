@@ -160,7 +160,7 @@ class EditAnnotationPopUp(QDialog):
                     self.trash_items.remove(self.trash_item)
             else:
                 if(self.trash_item.trash_type != self.updated_label):
-                    self.updated_conf = 100
+                    self.updated_conf = 1
                 self.trash_item.trash_type = self.updated_label
                 self.trash_item.conf = self.updated_conf
                 self.trash_item.updated = True
@@ -181,11 +181,11 @@ class EditAnnotationPopUp(QDialog):
         self.accept()
 
     def btnboost(self, b):
-        self.updated_conf = 100
+        self.updated_conf = 1
         self.accept()
 
     def shortcutboost(self):
-        self.updated_conf = 100
+        self.updated_conf = 1
         self.accept()
 
     def shortcutc0(self):

@@ -95,7 +95,8 @@ class Camera:
         curr_y = 0
         cv_depth_image = self.bridge.imgmsg_to_cv2(depth_image, "passthrough")
         for trash in self.trash_items:
-            if trash.conf > CONFIDENCE_THRESHOLD:
+            #multiply conf * number of frames
+            if trash.conf*len(trash.kp_x.measurements) > CONFIDENCE_THRESHOLD:
                 self.update_trash_location(trash, cv_depth_image)
                 if trash.y > curr_y:
                     target_trash = trash
@@ -117,7 +118,9 @@ class Camera:
         self.target_location_pub.publish(target_pose)
     
     def update_trash_location(self, trash, depth_image):
-        x = int(trash.x)
+        # x = int(trash.x)
+        # use the kalman estimate for x position of trash
+        x = int(trash.kp_x.est)
         y = int(trash.y)
         if y < len(depth_image) and x < len(depth_image[0]):
            z = depth_image[y, x]

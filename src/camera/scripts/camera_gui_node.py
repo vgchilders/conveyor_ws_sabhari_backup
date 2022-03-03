@@ -63,14 +63,17 @@ class DLabel(QLabel):
         qp.setPen(self.getPen(trash_item.trash_type, trash_item.conf))
         qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2))
                     * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
+        #Draw center estimate
+        qp.drawPoint(trash_item.kp_x.est*self.parent.scale_w, trash_item.y*self.parent.scale_h)
         if((trash_item.y - int(trash_item.height/2)) > text_height + 5):
             qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2) - 1)
                         * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
         else:
             qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y + int(trash_item.height/2) +
-                                                                                         text_height) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf)))
+                                                                                         text_height) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf*100)))
 
-    def getPen(self, type, conf):
+    def getPen(self, type, confidence):
+        conf = int(confidence * 100)
         thickness = 3
         opacity = min(max(100, int((conf/10)*255)), 255)
         if(type == 0):
@@ -138,7 +141,7 @@ class DLabel(QLabel):
         else:
             h = self.end.y() - self.start.y()
             y = self.end.y() - h/2
-        return trash_item.TrashItem(x/self.parent.scale_w+self.parent.camera.get_delta_x(), y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, label, 100, True)
+        return trash_item.TrashItem(x/self.parent.scale_w+self.parent.camera.get_delta_x(), y/self.parent.scale_h, w/self.parent.scale_w, h/self.parent.scale_h, label, 1, True)
 
     def updatePixmap(self, pixmap):
         self.pixmap = pixmap

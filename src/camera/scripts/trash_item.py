@@ -1,7 +1,13 @@
 from geometry_msgs.msg import Pose
+from statistics import variance
 
 
 IOU_THRESHOLD = .5
+class KalmanParameters:
+    def __init__(self):
+        self.e_est = 0.5 #pick some initial value between 0 and 1
+        self.est = None
+        self.measurements = []
 
 class TrashItem:
 
@@ -13,19 +19,33 @@ class TrashItem:
         self.trash_type = trash_type
         self.conf = conf
         self.updated = updated
-        #TODO actually use updated
         self.pose = Pose()
+        self.kp_conf = KalmanParameters()
+        self.kp_x = KalmanParameters()
+
+    
+    def update_kalman(self, mea, kp):
+        if(kp.est is None):
+            kp.est = mea
+        kp.measurements.append(mea)
+        kp.e_mea = variance(kp.measurements)
+        kg = e_est/(e_est + e_mea)
+        kp.est = est + kg*(mea - kp.est)
+        kp.e_est = (1-kg)*kp.e_est
+        return kp.est
     
     def compare_item(self, new_item):
         return self.calc_iou(self.get_bounding_box(), new_item.get_bounding_box()) > IOU_THRESHOLD
             
     def update_item(self, new_item):
         delta_x = new_item.x - self.x
+        self.update_kalman(new_item.x, self.kp_x)
         self.x = new_item.x
         self.y = new_item.y
         self.width = new_item.width
         self.height = new_item.height
-        self.conf += new_item.conf
+        # self.conf += new_item.conf
+        self.conf = self.update_kalman(new_item.conf, self.kp_conf)
 
         return delta_x
 
