@@ -29,13 +29,14 @@ class TrashItem:
         if(kp.est is None):
             kp.est = mea
         kp.measurements.append(mea)
-        if len(kp.measurements == 1):
-            kp.e_mea = INITIAL_ERROR
+        if (len(kp.measurements) == 1):
+            e_mea = INITIAL_ERROR
         else:
-            kp.e_mea = variance(kp.measurements)
-        kg = e_est/(e_est + e_mea)
-        kp.est = est + kg*(mea - kp.est)
+            e_mea = variance(kp.measurements)
+        kg = kp.e_est/(kp.e_est + e_mea)
+        kp.est = kp.est + kg*(mea - kp.est)
         kp.e_est = (1-kg)*kp.e_est
+        print("KP Est: ", kp.est)
         return kp.est
     
     def compare_item(self, new_item):
@@ -48,9 +49,7 @@ class TrashItem:
         self.y = new_item.y
         self.width = new_item.width
         self.height = new_item.height
-        # self.conf += new_item.conf
         self.conf = self.update_kalman(new_item.conf, self.kp_conf)
-
         return delta_x
 
     def get_bounding_box(self):

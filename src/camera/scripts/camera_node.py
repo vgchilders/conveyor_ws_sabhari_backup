@@ -118,10 +118,12 @@ class Camera:
         self.target_location_pub.publish(target_pose)
     
     def update_trash_location(self, trash, depth_image):
-        # x = int(trash.x)
         # use the kalman estimate for x position of trash
         x = int(trash.x)
-        y = int(trash.kp_y.est)
+        if (trash.kp_y.est is not None):
+            y = int(trash.kp_y.est)
+        else:
+            y = int(trash.y)
         if y < len(depth_image) and x < len(depth_image[0]):
            z = depth_image[y, x]
 
