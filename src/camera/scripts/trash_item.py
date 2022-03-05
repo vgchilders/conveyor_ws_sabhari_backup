@@ -46,12 +46,6 @@ class TrashItem:
             
     def update_item(self, new_item):
         #update_item will never be called on items that have been updated by a user
-        self.x = new_item.x
-        self.y = new_item.y
-        self.update_kalman(new_item.y, self.kp_y) #update kalman estimate of y
-        self.width = new_item.width
-        self.height = new_item.height
-
         self.update_kalman(new_item.conf, self.kp_conf[new_item.trash_type])
         
         #set self.conf and self.trash_type to type with highest confidence*num frames value
@@ -65,6 +59,16 @@ class TrashItem:
                     self.conf = self.kp_conf[trash_type].est
                     self.trash_type = trash_type
 
+        #Only update bbox if trash_type hasn't changed            
+        if new_item.trash_type == self.trash_type:            
+            self.x = new_item.x
+            self.y = new_item.y
+            self.width = new_item.width
+            self.height = new_item.height
+        #Always update center (or we may want to only update if trash type hasn't changed)
+        self.update_kalman(new_item.y, self.kp_y) #update kalman estimate of y
+
+                    
     def get_bounding_box(self):
         x1 = self.x - round(self.width / 2)
         x2 = self.x + round(self.width / 2)
