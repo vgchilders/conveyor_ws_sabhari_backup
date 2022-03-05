@@ -65,24 +65,17 @@ class Camera:
         print("Updated old list")
 
         # check if any new trash objects match existing trash objects
-        num_x, total_x = 0, 0
         for new_trash in new_trash_items:
+            matched_existing_trash = False
             for existing_trash in self.trash_items:
                 if new_trash.compare_item(existing_trash):
-                    if (new_trash.trash_type == existing_trash.trash_type):
-                        temp_x = existing_trash.update_item(new_trash) + (self.belt_speed * FPS_TARGET)/fps
-                        print("temp x = {0}".format(temp_x))
-                        if existing_trash.conf > CONFIDENCE_THRESHOLD and not existing_trash.updated:
-                            total_x += temp_x
-                            num_x += 1
-                    break
-            else:
-                self.trash_items.append(new_trash)
-        
-        # Recaculate belt speed
-        # if num_x > 0:
-        #     avg_x = total_x / num_x
-        #     self.belt_speed = (avg_x+(self.belt_speed * FPS_TARGET)/fps)/2
+                    matched_existing_trash = True
+                    #if the matched trash was updated/created by user, don't update
+                    if not existing_trash.updated:
+                        existing_trash.update_item(new_trash)
+                    
+            if not matched_existing_trash:
+                    self.trash_items.append(new_trash)
 
         print("Belt tspeed: {0}".format((self.belt_speed * FPS_TARGET)/fps))
         print("time: {0}".format(1/(time.time()-self.start_time)))
@@ -92,15 +85,15 @@ class Camera:
 
         # select confident trash item closest to the arm (the one with the highest y pos)
         target_trash = None
-        curr_y = 0
+        curr_x = 0
         cv_depth_image = self.bridge.imgmsg_to_cv2(depth_image, "passthrough")
         for trash in self.trash_items:
-            #multiply conf * number of frames
-            if trash.conf*len(trash.kp_y.measurements) > CONFIDENCE_THRESHOLD:
-                self.update_trash_location(trash, cv_depth_image)
-                if trash.y > curr_y:
+            #Check if conf*(number of frames predicted for that type) > CONFIDENCE_THRESHOLD or trash item has been updated by the user
+            if trash.conf*len(trash.kp_conf[trash.trash_type].measurements) > CONFIDENCE_THRESHOLD or trash.updated:
+                if trash.x > curr_x:
+                    self.update_trash_location(trash, cv_depth_image)
                     target_trash = trash
-                    curr_y = trash.y
+                    curr_x = trash.x
 
         print("Select trash")
 
@@ -118,12 +111,9 @@ class Camera:
         self.target_location_pub.publish(target_pose)
     
     def update_trash_location(self, trash, depth_image):
-        # use the kalman estimate for x position of trash
         x = int(trash.x)
-        if (trash.kp_y.est is not None):
-            y = int(trash.kp_y.est)
-        else:
-            y = int(trash.y)
+        y = int(trash.kp_y.est)  # use the kalman estimate for y position of trash
+
         if y < len(depth_image) and x < len(depth_image[0]):
            z = depth_image[y, x]
 

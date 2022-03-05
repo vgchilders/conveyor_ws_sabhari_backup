@@ -104,7 +104,9 @@ class DLabel(QLabel):
 
     def mouseReleaseEvent(self, event):
         if(self.parent.state == 1):
-            if(self.start.x() == self.end.x() and self.start.y() == self.end.y()):
+            #Click event (no box drawn)
+            if(self.start.x() == self.end.x() or self.start.y() == self.end.y()):
+                #Check if user clicked inside an existing bbox
                 self.selected_trash_item = self.checkForBBox(
                     self.start.x(), self.start.y())
                 if(self.selected_trash_item is not None):
@@ -113,18 +115,22 @@ class DLabel(QLabel):
                         self.selected_trash_item, self.parent.camera.trash_items, self.getGlobalPos(self.selected_trash_item))
                     self.selected_trash_item = None
             else:
-                
                 pop_up = CreateAnnotationPopUp(
                     self.start.x(), self.start.y(), self.getGlobalPos())
+                #If new annotation was saved
                 if(pop_up.label != -1):
-
-                    self.parent.camera.trash_items.append(
-                        self.make_trash_item(pop_up.label))
+                    #create new trash item
+                    new_trash = self.make_trash_item(pop_up.label)
+                    #check if new trash item matches any existing objects
+                    #remove matches since it will be overriden by the user drawn item
+                    for existing_trash in self.parent.camera.trash_items:
+                        if new_trash.compare_item(existing_trash):
+                            self.parent.camera.trash_items.remove(existing_trash)
+                    self.parent.camera.trash_items.append(new_trash)
             self.parent.state = 0
             self.update()
 
     def make_trash_item(self, label):
-        # TODO clicking without moving errors
         if(self.start.x() == self.end.x() or self.start.y() == self.end.y()):
             return None
         

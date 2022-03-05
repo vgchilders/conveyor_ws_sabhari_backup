@@ -3,12 +3,16 @@ from statistics import variance
 
 
 IOU_THRESHOLD = 0.5
-INITIAL_ERROR = 0.5 #initial value for kalman error of the estimate & error of measurement
+INITIAL_ERROR = 0.5 #initial value for kalman error of the estimate
 class KalmanParameters:
-    def __init__(self):
+    def __init__(self, est=None):
         self.e_est = INITIAL_ERROR 
-        self.est = None
-        self.measurements = []
+        self.est = est
+        if est is None:
+            self.measurements = []
+        else:
+            self.measurements = [est]
+        
 
 class TrashItem:
 
@@ -21,36 +25,45 @@ class TrashItem:
         self.conf = conf
         self.updated = updated
         self.pose = Pose()
-        self.kp_conf = KalmanParameters()
-        self.kp_y = KalmanParameters()
-
+        #initialize confidence for each class
+        self.kp_conf = [KalmanParameters(), KalmanParameters(), KalmanParameters(), KalmanParameters()]
+        self.kp_conf[trash_type].est = conf #set estimate for predicted type to be conf
+        self.kp_y = KalmanParameters(y)
     
     def update_kalman(self, mea, kp):
-        if(kp.est is None):
-            kp.est = mea
         kp.measurements.append(mea)
-        if (len(kp.measurements) == 1):
-            e_mea = INITIAL_ERROR
+        if kp.est is None:
+            kp.est = mea
         else:
             e_mea = variance(kp.measurements)
-        kg = kp.e_est/(kp.e_est + e_mea)
-        kp.est = kp.est + kg*(mea - kp.est)
-        kp.e_est = (1-kg)*kp.e_est
-        print("KP Est: ", kp.est)
+            kg = kp.e_est/(kp.e_est + e_mea)
+            kp.est = kp.est + kg*(mea - kp.est)
+            kp.e_est = (1-kg)*kp.e_est
         return kp.est
     
     def compare_item(self, new_item):
         return self.calc_iou(self.get_bounding_box(), new_item.get_bounding_box()) > IOU_THRESHOLD
             
     def update_item(self, new_item):
-        delta_x = new_item.x - self.x
+        #update_item will never be called on items that have been updated by a user
         self.x = new_item.x
-        self.update_kalman(new_item.y, self.kp_y)
         self.y = new_item.y
+        self.update_kalman(new_item.y, self.kp_y) #update kalman estimate of y
         self.width = new_item.width
         self.height = new_item.height
-        self.conf = self.update_kalman(new_item.conf, self.kp_conf)
-        return delta_x
+
+        self.update_kalman(new_item.conf, self.kp_conf[new_item.trash_type])
+        
+        #set self.conf and self.trash_type to type with highest confidence*num frames value
+        #this determines gets displayed on GUI
+        max_conf = 0
+        for trash_type in range(len(self.kp_conf)):
+            if self.kp_conf[trash_type].est is not None:
+                confidence = self.kp_conf[trash_type].est*len(self.kp_conf[trash_type].measurements)
+                if confidence >= max_conf:
+                    max_conf = confidence
+                    self.conf = self.kp_conf[trash_type].est
+                    self.trash_type = trash_type
 
     def get_bounding_box(self):
         x1 = self.x - round(self.width / 2)

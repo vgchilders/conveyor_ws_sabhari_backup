@@ -159,10 +159,8 @@ class EditAnnotationPopUp(QDialog):
                 if self.trash_item in self.trash_items:
                     self.trash_items.remove(self.trash_item)
             else:
-                if(self.trash_item.trash_type != self.updated_label):
-                    self.updated_conf = 1
                 self.trash_item.trash_type = self.updated_label
-                self.trash_item.conf = self.updated_conf
+                self.trash_item.conf = 1
                 self.trash_item.updated = True
 
     def btnstate(self, b):
