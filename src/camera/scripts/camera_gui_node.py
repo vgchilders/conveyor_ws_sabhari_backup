@@ -51,7 +51,7 @@ class DLabel(QLabel):
 
         print(self.parent.camera.trash_items_shown)
         for trash_item in self.parent.camera.trash_items_shown:
-            if trash_item.conf > 0.5:
+            if trash_item.conf >= 0.5:
                 self.drawTrashItem(trash_item, qp)
  
         if(self.selected_trash_item is not None):
@@ -64,7 +64,7 @@ class DLabel(QLabel):
         qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2))
                     * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
         #Draw center estimate
-        # qp.drawPoint(trash_item.x*self.parent.scale_w, trash_item.kp_y.est*self.parent.scale_h)
+        qp.drawPoint(trash_item.x*self.parent.scale_w, trash_item.kp_y.est*self.parent.scale_h)
         if((trash_item.y - int(trash_item.height/2)) > text_height + 5):
             qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2) - 1)
                         * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf*100)))
@@ -72,10 +72,9 @@ class DLabel(QLabel):
             qp.drawText((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y + int(trash_item.height/2) +
                                                                                          text_height) * self.parent.scale_h, str(self.trash_types[trash_item.trash_type])+" "+str(int(trash_item.conf*100)))
 
-    def getPen(self, type, confidence):
-        conf = int(confidence * 100)
+    def getPen(self, type, conf):
         thickness = 3
-        opacity = min(max(100, int((conf/10)*255)), 255)
+        opacity = min(max(50, int(conf*255)), 255)
         if(type == 0):
             pn = QPen(QColor(0, 255, 0, opacity), thickness, Qt.SolidLine)
         elif(type == 1):

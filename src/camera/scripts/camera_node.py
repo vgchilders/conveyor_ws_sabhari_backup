@@ -70,25 +70,21 @@ class Camera:
             for existing_trash in self.trash_items:
                 if new_trash.compare_item(existing_trash):
                     matched_existing_trash = True
-                    #if the matched trash was updated/created by user, don't update
-                    if not existing_trash.updated:
-                        existing_trash.update_item(new_trash)
+                    existing_trash.update_item(new_trash)
                     
             if not matched_existing_trash:
                     self.trash_items.append(new_trash)
 
         print("Belt tspeed: {0}".format((self.belt_speed * FPS_TARGET)/fps))
         print("time: {0}".format(1/(time.time()-self.start_time)))
-        
-
         print("Updated new list")
 
-        # select confident trash item closest to the arm (the one with the highest y pos)
+        # select confident trash item closest to the arm (the one with the highest x pos)
         target_trash = None
         curr_x = 0
         cv_depth_image = self.bridge.imgmsg_to_cv2(depth_image, "passthrough")
         for trash in self.trash_items:
-            #Check if conf*(number of frames predicted for that type) > CONFIDENCE_THRESHOLD or trash item has been updated by the user
+            #Check if (conf est)*(num frames) > CONFIDENCE_THRESHOLD or trash item has been updated by the user
             if trash.conf*len(trash.kp_conf[trash.trash_type].measurements) > CONFIDENCE_THRESHOLD or trash.updated:
                 if trash.x > curr_x:
                     self.update_trash_location(trash, cv_depth_image)
@@ -96,7 +92,6 @@ class Camera:
                     curr_x = trash.x
 
         print("Select trash")
-
         # convert & send target position to arm
         if target_trash and target_trash.trash_type == 0:
             self.send_target_location(target_trash.pose)
@@ -107,7 +102,6 @@ class Camera:
 
 
     def send_target_location(self, target_pose):
-        
         self.target_location_pub.publish(target_pose)
     
     def update_trash_location(self, trash, depth_image):

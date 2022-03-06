@@ -4,6 +4,7 @@ from statistics import variance
 
 IOU_THRESHOLD = 0.5
 INITIAL_ERROR = 0.5 #initial value for kalman error of the estimate
+
 class KalmanParameters:
     def __init__(self, est=None):
         self.e_est = INITIAL_ERROR 
@@ -45,29 +46,30 @@ class TrashItem:
         return self.calc_iou(self.get_bounding_box(), new_item.get_bounding_box()) > IOU_THRESHOLD
             
     def update_item(self, new_item):
-        #update_item will never be called on items that have been updated by a user
-        self.update_kalman(new_item.conf, self.kp_conf[new_item.trash_type])
-        
-        #set self.conf and self.trash_type to type with highest confidence*num frames value
-        #this determines gets displayed on GUI
-        max_conf = 0
-        for trash_type in range(len(self.kp_conf)):
-            if self.kp_conf[trash_type].est is not None:
-                confidence = self.kp_conf[trash_type].est*len(self.kp_conf[trash_type].measurements)
-                if confidence >= max_conf:
-                    max_conf = confidence
-                    self.conf = self.kp_conf[trash_type].est
-                    self.trash_type = trash_type
-
-        #Only update bbox if trash_type hasn't changed            
-        if new_item.trash_type == self.trash_type:            
+        #if the matched trash was updated/created by user, only update the x pos
+        if self.updated:
             self.x = new_item.x
-            self.y = new_item.y
-            self.width = new_item.width
-            self.height = new_item.height
-        #Always update center (or we may want to only update if trash type hasn't changed)
-        self.update_kalman(new_item.y, self.kp_y) #update kalman estimate of y
+        else:
+            #Update kalman parameters for conf and y pos
+            self.update_kalman(new_item.conf, self.kp_conf[new_item.trash_type])
+            self.update_kalman(new_item.y, self.kp_y) #update kalman estimate of y
 
+            #set self.conf and self.trash_type to type with highest (confidence estimate)*(num frames)
+            max_conf = 0
+            for trash_type in range(len(self.kp_conf)):
+                if self.kp_conf[trash_type].est is not None:
+                    confidence = self.kp_conf[trash_type].est*len(self.kp_conf[trash_type].measurements)
+                    if confidence >= max_conf:
+                        max_conf = confidence
+                        self.conf = self.kp_conf[trash_type].est
+                        self.trash_type = trash_type
+
+            #Use the bounding box of the most confident trash_type     
+            if new_item.trash_type == self.trash_type:            
+                self.x = new_item.x
+                self.y = new_item.y
+                self.width = new_item.width
+                self.height = new_item.height
                     
     def get_bounding_box(self):
         x1 = self.x - round(self.width / 2)
