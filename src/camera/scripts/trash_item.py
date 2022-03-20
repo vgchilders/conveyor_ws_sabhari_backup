@@ -36,10 +36,13 @@ class TrashItem:
         if kp.est is None:
             kp.est = mea
         else:
-            e_mea = variance(kp.measurements)
+            if len(kp.measurements) <=1:
+                e_mea = INITIAL_ERROR
+            else:
+                e_mea = variance(kp.measurements)
             kg = kp.e_est/(kp.e_est + e_mea)
             kp.est = kp.est + kg*(mea - kp.est)
-            kp.e_est = (1-kg)*kp.e_est
+            kp.e_est = max((1-kg)*kp.e_est, 0.01)
         return kp.est
     
     def compare_item(self, new_item):
