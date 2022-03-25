@@ -9,7 +9,7 @@ from dynamixel_sdk_examples.srv import *
 from dynamixel_sdk_examples.msg import *
 from tool_dynamixel import DynamixelMotor
 
-from std_msgs.msg import Float64, String
+from std_msgs.msg import Float64, String, Int32
 from arm.srv import dynamixel_srv, stepper_srv
 
 if os.name == 'nt':
@@ -109,21 +109,30 @@ class Teensy:
 
     def setup_services(self):
         rospy.Service('arm/xy_axis_set', stepper_srv, self.handle_xy_axis)
+        rospy.Service('arm/suction_gripper', dynamixel_srv, self.handle_gripper)
 
     def setup_publishers(self):
         self.pub_xy_axis = rospy.Publisher('/arm/xy_axis', String, queue_size=1)
     
 
     def handle_xy_axis(self,req):
-        data = "<-99,-99>"; x = 0; y = 0 # Default values for homing
+        # 0 for xy movement
+        data = "<0,-99,-99>"; x = 0; y = 0 # Default values for homing
         if(not(req.data1 == -99 and req.data2 == -99)):
             x = req.data1; x = max(self.x_axis_min,x); x = min(self.x_axis_max,x); x = int(x)
             y = req.data2; y = max(self.y_axis_min,y); y = min(self.y_axis_max,y); y = int(y)
-            data = "<"+str(-x)+","+str(y)+">" # Inverting x due to the nature of home position
+            data = "<0,"+str(-x)+","+str(y)+">" # Inverting x due to the nature of home position
         teensyPortHandler.write(bytes(data, 'utf-8'))
         time.sleep(0.05)
         self.pub_xy_axis.publish(str(x)+","+str(y))
         return True
+    
+    def handle_gripper(self, req):
+        data =  "<1,"+str(req.data)+">"
+        teensyPortHandler.write(bytes(data, 'utf-8'))
+        time.sleep(0.05)
+        return True;
+
 
 def controller_node():
     rospy.init_node('arm_controller_node')

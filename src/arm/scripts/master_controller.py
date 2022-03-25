@@ -28,7 +28,7 @@ class Master():
     def setup_services(self):
         self.srv_set_xy_axis = rospy.ServiceProxy('arm/xy_axis_set', stepper_srv)
         self.srv_set_z_axis = rospy.ServiceProxy('arm/z_axis_set', dynamixel_srv)
-        # self.srv_set_gripper = rospy.ServiceProxy('arm/gripper_set', dynamixel_srv)
+        self.srv_set_gripper = rospy.ServiceProxy('arm/suction_gripper', dynamixel_srv)
     
     def setup_subscribers(self):
         rospy.Subscriber("/target_location", Pose, callback=self.wait_for_object, queue_size=1)
@@ -48,8 +48,8 @@ class Master():
             sleep(MOVE_ARM_TIME)
 
             # Grip object
-            # self.srv_set_gripper(Dynamixel.gripper_max)
-            # sleep(GRAB_TIME)
+            self.srv_set_gripper(1)
+            sleep(GRAB_TIME)
 
             # Arm up
             self.srv_set_z_axis(ARM_UP)
@@ -60,8 +60,8 @@ class Master():
             sleep(RETURN_TIME)
             
             # Let go of object
-            # self.srv_set_gripper(Dynamixel.gripper_min)
-            # sleep(GRAB_TIME)
+            self.srv_set_gripper(0)
+            sleep(GRAB_TIME)
 
 
 

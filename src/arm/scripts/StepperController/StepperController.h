@@ -18,7 +18,8 @@ enum robot_states{
   WAITING_TO_START,
   HOMING,
   WAITING_FOR_INSTRUCTION,
-  MOVING
+  MOVING,
+  HANDLE_SUCTION
 };
 
 enum LimitState {

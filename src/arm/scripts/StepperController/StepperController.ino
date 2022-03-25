@@ -94,15 +94,27 @@ void recvWithStartEndMarkers() {
 
 int xInt = 0;
 int yInt = 0;
+int gripperState = 0;
+int mode = 0;
 
 // Parse serial input
 void parseData(){
   char *strtokIndx;                         // this is used by strtok() as an index
-  strtokIndx = strtok(tempChars,",");       // get the first part - the string
-  xInt = atoi(strtokIndx);                  // convert this part to an integer
+  strtokIndx = strtok(tempChars,",");
+  mode = atoi(strtokIndx);
 
-  strtokIndx = strtok(NULL, ",");           // this continues where the previous call left off
-  yInt = atoi(strtokIndx);                  // convert this part to an integer
+  if (mode == 0) {
+    strtokIndx = strtok(NULL,",");       // get the first part - the string
+    xInt = atoi(strtokIndx);                  // convert this part to an integer
+
+    strtokIndx = strtok(NULL, ",");           // this continues where the previous call left off
+    yInt = atoi(strtokIndx);                  // convert this part to an integer
+  }
+  else if (mode == 1) {
+    strtokIndx = strtok(NULL,",");       // get the first part - the string
+    gripperState = atoi(strtokIndx); 
+  }
+  
 }
 
 // Serial print the parsed input
@@ -259,6 +271,7 @@ void homeYAxis(){
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);
+  pinMode(SOLENOID, OUTPUT);
   
   stepperEnablePins();
   stepperInvertPins();
@@ -304,9 +317,12 @@ void loop(){
       Serial.println("Waiting to Start");
       readData();
       showParsedData();
-      if(xInt == -99 && yInt == -99){
+      if(xInt == -99 && yInt == -99 && mode == 0){
         current_state = HOMING;
         Serial.println("Robot Started");
+      }
+      else if (mode == 1) {
+        current_state = HANDLE_SUCTION;
       }
       break;
     case HOMING:
@@ -320,8 +336,11 @@ void loop(){
       Serial.println("Waiting for instruction");
       readData();
       showParsedData();
-      if(xInt == -99 && yInt == -99){
+      if(xInt == -99 && yInt == -99 && mode == 0){
         current_state = HOMING;
+      }
+      else if (mode == 1) {
+        current_state = HANDLE_SUCTION;
       }
       else{
         stepper_x.moveTo(xInt);
@@ -347,6 +366,10 @@ void loop(){
           Serial.println("Move Completed");
         }
       }
+      break;
+    case HANDLE_SUCTION:
+      digitalWrite(SOLENOID, gripperState);
+      current_state = WAITING_FOR_INSTRUCTION;
       break;
     case X_MIN_LS_HIT:
       Serial.println("X_MIN Limit switch hit");
