@@ -9,11 +9,11 @@ from arm_controller import Dynamixel
 from std_msgs.msg import Int32
 from arm.srv import dynamixel_srv, stepper_srv
 
-BELT_SPEED_MM_SEC = 83.369565217/2
+BELT_SPEED_MM_SEC = 90.76328953 # DO NOT TOUCH, NO TOUCHY
 
-ARM_PICKUP_TIME = 1
+ARM_PICKUP_TIME = .25
 RETURN_TIME = 2
-MOVE_ARM_TIME = .5
+MOVE_ARM_TIME = 1
 GRAB_TIME = .5
 
 ARM_UP = 0
@@ -43,13 +43,12 @@ class Master():
             self.move_arm(req.position.x,req.position.y)
             sleep(wait_time)
 
+            # Grip object
+            self.srv_set_gripper(1)
+
             # Arm down
             self.srv_set_z_axis(ARM_DOWN)
             sleep(MOVE_ARM_TIME)
-
-            # Grip object
-            self.srv_set_gripper(1)
-            sleep(GRAB_TIME)
 
             # Arm up
             self.srv_set_z_axis(ARM_UP)
