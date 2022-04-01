@@ -14,7 +14,7 @@ import time
 import warnings
 warnings.filterwarnings("ignore")
 CONFIDENCE_THRESHOLD = 10
-X_THRESHOLD = 1000 #640
+X_THRESHOLD = 750 #640
 FPS_TARGET = 5
 class Camera:
     def __init__(self):
@@ -126,7 +126,7 @@ class Camera:
         new_y = ((cameraInfo.height - y) / cameraInfo.height) * 610
         new_z = 0
 
-        return new_y+120, new_x+630, new_z #Switch coord system from camera to arm
+        return new_y+120, new_x+730, new_z #Switch coord system from camera to arm
 
     def depth_to_pos(self, x, y, depth, cameraInfo):
         intrinsics = rs.intrinsics()

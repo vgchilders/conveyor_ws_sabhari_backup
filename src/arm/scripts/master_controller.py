@@ -9,15 +9,15 @@ from arm_controller import Dynamixel
 from std_msgs.msg import Int32
 from arm.srv import dynamixel_srv, stepper_srv
 
-BELT_SPEED_MM_SEC = 90.76328953 # DO NOT TOUCH, NO TOUCHY
+BELT_SPEED_MM_SEC = 84.5 # DO NOT TOUCH, NO TOUCHY
 
 ARM_PICKUP_TIME = .25
 RETURN_TIME = 2
-MOVE_ARM_TIME = 1
+MOVE_ARM_TIME = .75
 GRAB_TIME = .5
 
 ARM_UP = 0
-ARM_DOWN = 15
+ARM_DOWN = 19
 
 
 class Master():
