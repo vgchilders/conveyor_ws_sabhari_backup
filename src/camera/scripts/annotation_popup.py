@@ -60,7 +60,7 @@ class CreateAnnotationPopUp(QDialog):
 
     def initCreateAnnot(self):
         if self.exec():
-            print("Create: ", time.time()-self.start_time)
+            print("Create, ", time.time()-self.start_time)
         else:
             self.label = -1
 
@@ -161,12 +161,12 @@ class EditAnnotationPopUp(QDialog):
             if self.delete:
                 if self.trash_item in self.trash_items:
                     self.trash_items.remove(self.trash_item)
-                print("Delete: ", time.time()-self.start_time)
+                print("Delete, ", time.time()-self.start_time)
             else:
                 self.trash_item.trash_type = self.updated_label
                 self.trash_item.conf = 1
                 self.trash_item.updated = True
-                print("Update: ", time.time()-self.start_time)
+                print("Update, ", time.time()-self.start_time)
 
     def btnstate(self, b):
         if b.isChecked() == True:
