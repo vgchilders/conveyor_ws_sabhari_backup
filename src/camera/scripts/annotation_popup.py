@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-
+import time
 class CreateAnnotationPopUp(QDialog):
     def __init__(self, x, y, global_pos):
         super().__init__()
@@ -54,11 +54,13 @@ class CreateAnnotationPopUp(QDialog):
         verticalLayout.addWidget(buttonBox)
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
+
+        self.start_time = time.time()
         self.initCreateAnnot()
 
     def initCreateAnnot(self):
         if self.exec():
-            print("Created trash_item type: ", self.label)
+            print("Create: ", time.time()-self.start_time)
         else:
             self.label = -1
 
@@ -98,6 +100,7 @@ class EditAnnotationPopUp(QDialog):
         self.top = global_pos[1] - (self.height/2)
         if(global_pos[2] == -1):
             self.left -= self.width
+        self.start_time = time.time()
 
         QDialog.__init__(self)
         self.setWindowTitle("Edit")
@@ -158,10 +161,12 @@ class EditAnnotationPopUp(QDialog):
             if self.delete:
                 if self.trash_item in self.trash_items:
                     self.trash_items.remove(self.trash_item)
+                print("Delete: ", time.time()-self.start_time)
             else:
                 self.trash_item.trash_type = self.updated_label
                 self.trash_item.conf = 1
                 self.trash_item.updated = True
+                print("Update: ", time.time()-self.start_time)
 
     def btnstate(self, b):
         if b.isChecked() == True:

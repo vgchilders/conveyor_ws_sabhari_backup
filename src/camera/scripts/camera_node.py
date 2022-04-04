@@ -36,7 +36,7 @@ class Camera:
         # Publishers
         self.target_location_pub = rospy.Publisher("/target_location", Pose, queue_size=1)
 
-        print("Camera Init")
+        # print("Camera Init")
         
     def update_camera_info(self, caminfo):
         self.cameraInfo = caminfo
@@ -49,11 +49,11 @@ class Camera:
     def new_image_recieved(self, depth_image, color_img):
         self.start_time=time.time()
         cv_image = self.bridge.imgmsg_to_cv2(color_img, "bgr8")
-        print("New image!")
+        # print("New image!")
 
         # find trash objects in image
         new_trash_items = self.classifier.classify(cv_image)
-        print("new items: {0}".format(len(new_trash_items)))
+        # print("new items: {0}".format(len(new_trash_items)))
         fps= 1/(time.time()-self.start_time)
         # update previously detected trash item list with belt speed
         delta_x = (self.belt_speed * FPS_TARGET)/fps
@@ -62,7 +62,7 @@ class Camera:
             trash.x += delta_x
             if trash.x > X_THRESHOLD:
                 self.trash_items.remove(trash)
-        print("Updated old list")
+        # print("Updated old list")
 
         # check if any new trash objects match existing trash objects
         for new_trash in new_trash_items:
@@ -75,9 +75,9 @@ class Camera:
             if not matched_existing_trash:
                     self.trash_items.append(new_trash)
 
-        print("Belt tspeed: {0}".format((self.belt_speed * FPS_TARGET)/fps))
-        print("time: {0}".format(1/(time.time()-self.start_time)))
-        print("Updated new list")
+        # print("Belt tspeed: {0}".format((self.belt_speed * FPS_TARGET)/fps))
+        # print("time: {0}".format(1/(time.time()-self.start_time)))
+        # print("Updated new list")
 
         # select confident trash item closest to the arm (the one with the highest x pos)
         target_trash = None
@@ -91,7 +91,7 @@ class Camera:
                     target_trash = trash
                     curr_x = trash.x
 
-        print("Select trash")
+        # print("Select trash")
         # convert & send target position to arm
         if target_trash and target_trash.trash_type == 0:
             self.send_target_location(target_trash.pose)
@@ -111,7 +111,7 @@ class Camera:
         if y < len(depth_image) and x < len(depth_image[0]):
            z = depth_image[y, x]
 
-           print("[{0},{1},{2}]".format(x, y, z))
+        #    print("[{0},{1},{2}]".format(x, y, z))
 
            location = self.pixel_to_pos(x, y, self.cameraInfo)
 

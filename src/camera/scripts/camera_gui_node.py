@@ -49,7 +49,7 @@ class DLabel(QLabel):
         if(self.parent.state == 1):
             qp.drawRect(QRect(self.start, self.end))
 
-        print(self.parent.camera.trash_items_shown)
+        # print(self.parent.camera.trash_items_shown)
         for trash_item in self.parent.camera.trash_items_shown:
             if trash_item.conf >= 0.5:
                 self.drawTrashItem(trash_item, qp)
@@ -60,7 +60,7 @@ class DLabel(QLabel):
     def drawTrashItem(self, trash_item, qp):
         text_height = 25
         qp.setBrush(Qt.NoBrush)
-        qp.setPen(self.getPen(trash_item.trash_type, trash_item.conf))
+        qp.setPen(self.getPen(trash_item.trash_type, trash.conf*len(trash.kp_conf[trash.trash_type].measurements)))
         qp.drawRect((trash_item.x - int(trash_item.width/2)) * self.parent.scale_w, (trash_item.y - int(trash_item.height/2))
                     * self.parent.scale_h, trash_item.width * self.parent.scale_w, trash_item.height * self.parent.scale_h)
         #Draw center estimate
@@ -74,7 +74,7 @@ class DLabel(QLabel):
 
     def getPen(self, type, conf):
         thickness = 3
-        opacity = min(max(50, int(conf*255)), 255)
+        opacity = min(max(50, int(conf*25.5)), 255)
         if(type == 0):
             pn = QPen(QColor(0, 255, 0, opacity), thickness, Qt.SolidLine)
         elif(type == 1):
@@ -95,7 +95,7 @@ class DLabel(QLabel):
 
     def mouseMoveEvent(self, event):
         if(self.parent.state == 1):
-            print(self.parent.state)
+            # print(self.parent.state)
             self.end = event.pos()
             self.update()
         else:
@@ -224,7 +224,7 @@ class DLabel(QLabel):
 class TWindow(QMainWindow):
     def __init__(self, parent = None):
         super().__init__(parent)
-        print("TWindow init")
+        # print("TWindow init")
         self.setAttribute(Qt.WA_DeleteOnClose)
 
        # Self objects
@@ -324,7 +324,7 @@ class TWindow(QMainWindow):
         return scaled_pixmap
 
     def start(self):
-        print("Homing X,Y,Z Axes")
+        # print("Homing X,Y,Z Axes")
         self.pub_home.publish(Int32())
         self.setup_subscribers()
 
