@@ -13,7 +13,7 @@ import message_filters
 import time
 import warnings
 warnings.filterwarnings("ignore")
-CONFIDENCE_THRESHOLD = 10
+CONFIDENCE_THRESHOLD = 9
 X_THRESHOLD = 750 #640
 FPS_TARGET = 5
 class Camera:
