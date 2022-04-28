@@ -2,7 +2,7 @@
 #define MQP_STEPPER_CONTROLLER_H_
 
 const float MAX_SPEED = 1000;    // todo - verify constants 600
-const float MIN_SPEED = 100;   // todo: does this affect going in the negative direction?
+const float MIN_SPEED = 400;   // todo: does this affect going in the negative direction?
 const int ACCELERATION = 500;
 const int X_MAX_POS = 1610;
 const int X_MIN_POS = 0;
@@ -18,7 +18,8 @@ enum robot_states{
   WAITING_TO_START,
   HOMING,
   WAITING_FOR_INSTRUCTION,
-  MOVING
+  MOVING,
+  HANDLE_SUCTION
 };
 
 enum LimitState {

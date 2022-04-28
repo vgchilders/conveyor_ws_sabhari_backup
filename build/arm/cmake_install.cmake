@@ -1,8 +1,8 @@
-# Install script for directory: /home/recycling-robot-mqp/ros_ws/src/arm
+# Install script for directory: /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/recycling-robot-mqp/ros_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,64 +38,64 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/recycling-robot-mqp/ros_ws/build/arm/catkin_generated/safe_execute_install.cmake")
+  include("/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/catkin_generated/safe_execute_install.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm/srv" TYPE FILE FILES
-    "/home/recycling-robot-mqp/ros_ws/src/arm/srv/dynamixel_srv.srv"
-    "/home/recycling-robot-mqp/ros_ws/src/arm/srv/stepper_srv.srv"
+    "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm/srv/dynamixel_srv.srv"
+    "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm/srv/stepper_srv.srv"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm/cmake" TYPE FILE FILES "/home/recycling-robot-mqp/ros_ws/build/arm/catkin_generated/installspace/arm-msg-paths.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm/cmake" TYPE FILE FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/catkin_generated/installspace/arm-msg-paths.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/ros_ws/devel/include/arm")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/include/arm")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/ros_ws/devel/share/roseus/ros/arm")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/share/roseus/ros/arm")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/ros_ws/devel/share/common-lisp/ros/arm")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/share/common-lisp/ros/arm")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gennodejs/ros" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/ros_ws/devel/share/gennodejs/ros/arm")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gennodejs/ros" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/share/gennodejs/ros/arm")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  execute_process(COMMAND "/usr/bin/python3" -m compileall "/home/recycling-robot-mqp/ros_ws/devel/lib/python3/dist-packages/arm")
+  execute_process(COMMAND "/usr/bin/python3" -m compileall "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/lib/python3/dist-packages/arm")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/ros_ws/devel/lib/python3/dist-packages/arm" REGEX "/\\_\\_init\\_\\_\\.py$" EXCLUDE REGEX "/\\_\\_init\\_\\_\\.pyc$" EXCLUDE)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/lib/python3/dist-packages/arm" REGEX "/\\_\\_init\\_\\_\\.py$" EXCLUDE REGEX "/\\_\\_init\\_\\_\\.pyc$" EXCLUDE)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/ros_ws/devel/lib/python3/dist-packages/arm" FILES_MATCHING REGEX "/home/recycling-robot-mqp/ros_ws/devel/lib/python3/dist-packages/arm/.+/__init__.pyc?$")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/lib/python3/dist-packages/arm" FILES_MATCHING REGEX "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/lib/python3/dist-packages/arm/.+/__init__.pyc?$")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/recycling-robot-mqp/ros_ws/build/arm/catkin_generated/installspace/arm.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/catkin_generated/installspace/arm.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm/cmake" TYPE FILE FILES "/home/recycling-robot-mqp/ros_ws/build/arm/catkin_generated/installspace/arm-msg-extras.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm/cmake" TYPE FILE FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/catkin_generated/installspace/arm-msg-extras.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm/cmake" TYPE FILE FILES
-    "/home/recycling-robot-mqp/ros_ws/build/arm/catkin_generated/installspace/armConfig.cmake"
-    "/home/recycling-robot-mqp/ros_ws/build/arm/catkin_generated/installspace/armConfig-version.cmake"
+    "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/catkin_generated/installspace/armConfig.cmake"
+    "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/arm/catkin_generated/installspace/armConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm" TYPE FILE FILES "/home/recycling-robot-mqp/ros_ws/src/arm/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/arm" TYPE FILE FILES "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/arm/package.xml")
 endif()
 

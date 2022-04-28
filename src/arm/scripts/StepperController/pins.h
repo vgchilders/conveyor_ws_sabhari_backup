@@ -32,4 +32,7 @@
 #define START_BUTTON 23
 #define STOP_BUTTON 22
 
+// suction cup solenoid
+#define SOLENOID 20
+
 #endif

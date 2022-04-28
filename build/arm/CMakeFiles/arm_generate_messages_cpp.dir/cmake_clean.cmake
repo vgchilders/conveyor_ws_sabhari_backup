@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/recycling-robot-mqp/ros_ws/devel/include/arm/dynamixel_srv.h"
-  "/home/recycling-robot-mqp/ros_ws/devel/include/arm/stepper_srv.h"
+  "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/include/arm/dynamixel_srv.h"
+  "/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/devel/include/arm/stepper_srv.h"
   "CMakeFiles/arm_generate_messages_cpp"
 )
 

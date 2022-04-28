@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/recycling-robot-mqp/ros_ws/src
+CMAKE_SOURCE_DIR = /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/recycling-robot-mqp/ros_ws/build
+CMAKE_BINARY_DIR = /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build
 
 # Utility rule file for rosgraph_msgs_generate_messages_cpp.
 
@@ -63,10 +63,10 @@ camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build: rosgraph_msgs_g
 .PHONY : camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
 
 camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/clean:
-	cd /home/recycling-robot-mqp/ros_ws/build/camera && $(CMAKE_COMMAND) -P CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/cmake_clean.cmake
+	cd /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/camera && $(CMAKE_COMMAND) -P CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/cmake_clean.cmake
 .PHONY : camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/clean
 
 camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/depend:
-	cd /home/recycling-robot-mqp/ros_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/recycling-robot-mqp/ros_ws/src /home/recycling-robot-mqp/ros_ws/src/camera /home/recycling-robot-mqp/ros_ws/build /home/recycling-robot-mqp/ros_ws/build/camera /home/recycling-robot-mqp/ros_ws/build/camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/camera /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/camera /home/recycling-robot-mqp/conveyor_ws_sabhari_backup/build/camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : camera/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/depend
 
