@@ -84,16 +84,17 @@ class Camera:
         curr_x = 0
         cv_depth_image = self.bridge.imgmsg_to_cv2(depth_image, "passthrough")
         for trash in self.trash_items:
-            #Check if (conf est)*(num frames) > CONFIDENCE_THRESHOLD or trash item has been updated by the user
-            if trash.conf*len(trash.kp_conf[trash.trash_type].measurements) > CONFIDENCE_THRESHOLD or trash.updated:
-                if trash.x > curr_x:
-                    self.update_trash_location(trash, cv_depth_image)
-                    target_trash = trash
-                    curr_x = trash.x
+            if trash.trash_type == 0: #Check if cardboard
+                #Check if (conf est)*(num frames) > CONFIDENCE_THRESHOLD or trash item has been updated by the user
+                if trash.conf*len(trash.kp_conf[trash.trash_type].measurements) > CONFIDENCE_THRESHOLD or trash.updated:
+                    if trash.x > curr_x:
+                        self.update_trash_location(trash, cv_depth_image)
+                        target_trash = trash
+                        curr_x = trash.x
 
         # print("Select trash")
         # convert & send target position to arm
-        if target_trash and target_trash.trash_type == 0:
+        if target_trash:
             self.send_target_location(target_trash.pose)
         else:
             self.send_target_location(self.no_trash)
