@@ -42,4 +42,7 @@
     <include file="$(find realsense2_camera)/launch/rs_camera.launch">
         <arg name="align_depth" value="true"/>
     </include>
+
+    <node name="master_controller" type="master_controller.py" pkg="arm" output="screen"/>
+    <node name="camera_gui_node" type="camera_gui_node.py" pkg="camera" output="screen"/>
 </launch>

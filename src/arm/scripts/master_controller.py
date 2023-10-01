@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 from tkinter import wantobjects
 import rospy
@@ -10,9 +11,10 @@ from std_msgs.msg import Int32
 from arm.srv import dynamixel_srv, stepper_srv
 
 BELT_SPEED_MM_SEC = 84.5 # DO NOT TOUCH, NO TOUCHY
+#Shame, shame, shame.
 
 ARM_PICKUP_TIME = .25
-RETURN_TIME = 2
+RETURN_TIME = 10
 MOVE_ARM_TIME = .75
 GRAB_TIME = .5
 
@@ -36,7 +38,7 @@ class Master():
 
     def wait_for_object(self,req):
         wait_time = (req.position.y/BELT_SPEED_MM_SEC)-ARM_PICKUP_TIME
-        print(wait_time)
+        # print(wait_time)
 
         if (wait_time - ARM_PICKUP_TIME > 0):
             # Move to object
@@ -75,11 +77,11 @@ class Master():
         x_stepper= round((x*20)/belt_circumfrence)
         y_stepper= round((y*20)/belt_circumfrence)
 
-        print("Moving X,Y-Axis to ",x_stepper, ",",y_stepper)
+        print("master_controller:Moving X,Y-Axis to ",x_stepper, ",",y_stepper)
         self.srv_set_xy_axis(x_stepper,y_stepper)
     
-    def home_robot(self, req):
-        print("Homing X,Y,Z Axes")
+    def home_robot(self, req=False):
+        print("master_controller:Homing X,Y,Z Axes")
         self.srv_set_z_axis(Dynamixel.z_axis_min)
         # self.srv_set_gripper(Dynamixel.gripper_min)
         self.srv_set_xy_axis(-99,-99)
@@ -88,5 +90,10 @@ class Master():
 
 if __name__ == '__main__':
 	rospy.init_node('master_controller', anonymous=True)
-	Master()
+	m = Master()
+	# sleep(2)
+	# m.home_robot()
+	# while(True):
+	# 	m.move_arm(1,1)
+	# 	m.move_arm(43,79)
 	rospy.spin()

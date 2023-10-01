@@ -21,7 +21,6 @@ class DynamixelMotor:
 		self.id = motor_id
 		self.portHandler = portHandler
 		self.packetHandler = packetHandler
-		
 
 	# attempt to enable torque
 	def enable_torque(self):

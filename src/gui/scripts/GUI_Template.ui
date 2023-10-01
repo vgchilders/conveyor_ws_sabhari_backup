@@ -109,8 +109,8 @@ Go to home</string>
   <widget class="QLabel" name="Title_2">
    <property name="geometry">
     <rect>
-     <x>700</x>
-     <y>240</y>
+     <x>680</x>
+     <y>230</y>
      <width>411</width>
      <height>21</height>
     </rect>
@@ -131,7 +131,7 @@ Go to home</string>
     <enum>Qt::LeftToRight</enum>
    </property>
    <property name="text">
-    <string>Gripper controls</string>
+    <string>Suction Controls</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -222,6 +222,9 @@ Go to home</string>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="maximum">
+    <double>80.000000000000000</double>
+   </property>
   </widget>
   <widget class="QDoubleSpinBox" name="XY_Y_SpinBox">
    <property name="geometry">
@@ -231,6 +234,9 @@ Go to home</string>
      <width>100</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="maximum">
+    <double>43.000000000000000</double>
    </property>
   </widget>
   <widget class="QPushButton" name="XY_Button">
@@ -276,7 +282,7 @@ Go to home</string>
   <widget class="QPushButton" name="Grip_Open">
    <property name="geometry">
     <rect>
-     <x>1018</x>
+     <x>910</x>
      <y>270</y>
      <width>90</width>
      <height>60</height>
@@ -289,7 +295,7 @@ Go to home</string>
   <widget class="QPushButton" name="Grip_Close">
    <property name="geometry">
     <rect>
-     <x>910</x>
+     <x>780</x>
      <y>270</y>
      <width>90</width>
      <height>60</height>
@@ -355,48 +361,6 @@ Go to home</string>
      <x>910</x>
      <y>180</y>
      <width>190</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Set</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="Grip_Val">
-   <property name="geometry">
-    <rect>
-     <x>700</x>
-     <y>270</y>
-     <width>190</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::Box</enum>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="Grip_SpinBox">
-   <property name="geometry">
-    <rect>
-     <x>700</x>
-     <y>300</y>
-     <width>90</width>
-     <height>30</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="Grip_Button">
-   <property name="geometry">
-    <rect>
-     <x>800</x>
-     <y>300</y>
-     <width>90</width>
      <height>30</height>
     </rect>
    </property>

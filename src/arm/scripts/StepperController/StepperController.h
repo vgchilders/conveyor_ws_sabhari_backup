@@ -1,9 +1,10 @@
 #ifndef MQP_STEPPER_CONTROLLER_H_
 #define MQP_STEPPER_CONTROLLER_H_
 
-const float MAX_SPEED = 1000;    // todo - verify constants 600
-const float MIN_SPEED = 400;   // todo: does this affect going in the negative direction?
-const int ACCELERATION = 500;
+const float MAX_SPEED_Y = 600;    // todo - verify constants 600.
+const float MAX_SPEED_X = 1100;
+const float MIN_SPEED = 300;   // todo: does this affect going in the negative direction?
+const int ACCELERATION = 1000; 
 const int X_MAX_POS = 1610;
 const int X_MIN_POS = 0;
 const int Y_MAX_POS = 900;

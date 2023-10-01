@@ -42,7 +42,7 @@ dynamixelPacketHandler = PacketHandler(PROTOCOL_VERSION)
 
 # Teensy parameters
 TeensyDEVICENAME    = '/dev/ttyACM0'
-TeensyBAUDRATE      = 115200
+TeensyBAUDRATE      = 115200*2
 
 teensyPortHandler = serial.Serial(port=TeensyDEVICENAME, baudrate=TeensyBAUDRATE, timeout=1)
 
@@ -67,7 +67,7 @@ class Dynamixel:
         self.setup_services()
         self.setup_publishers()
 
-        print("Dynamixel ready to control")
+        print("arm_controller:Dynamixel ready to control")
 
     def setup_services(self):
         rospy.Service('arm/z_axis_set', dynamixel_srv, self.handle_z_axis)
@@ -105,7 +105,7 @@ class Teensy:
     def __init__(self):
         self.setup_services()
         self.setup_publishers()
-        print("Stepper motors ready to control")
+        print("arm_controller:Stepper motors ready to control")
 
     def setup_services(self):
         rospy.Service('arm/xy_axis_set', stepper_srv, self.handle_xy_axis)
@@ -138,34 +138,35 @@ def controller_node():
     rospy.init_node('arm_controller_node')
     Dynamixel(1,2,3)
     Teensy() 
+    print("arm_controller:Setup Finished")
     rospy.spin()
-
+    
 def main():
     # Open port
     try:
        dynamixelPortHandler.openPort()
-       print("Succeeded to open the port for dynamixel")
+       print("arm_controller:Succeeded to open the port for dynamixel")
     except:
-        print("Failed to open the port for dynamixel")
-        print("Press any key to terminate...")
+        print("arm_controller:Failed to open the port for dynamixel")
+        print("arm_controller:Press any key to terminate...")
         getch()
         quit()
 
     # Set port baudrate
     try:
         dynamixelPortHandler.setBaudRate(DynamixelBAUDRATE)
-        print("Succeeded to change the baudrate for dynamixel")
+        print("arm_controller:Succeeded to change the baudrate for dynamixel")
     except:
-        print("Failed to change the baudrate for dynamixel")
-        print("Press any key to terminate...")
+        print("arm_controller:Failed to change the baudrate for dynamixel")
+        print("arm_controller:Press any key to terminate...")
         getch()
         quit()
 
     if teensyPortHandler.isOpen():
-        print("Succeeded to open the port for teesy")
+        print("arm_controller:Succeeded to open the port for teesy")
     else:
-        print("Failed to open the port for teensy")
-        print("Press any key to terminate...")
+        print("arm_controller:Failed to open the port for teensy")
+        print("arm_controller:Press any key to terminate...")
         getch()
         quit()
 

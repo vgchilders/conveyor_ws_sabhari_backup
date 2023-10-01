@@ -29,6 +29,7 @@ class TrashItem:
         #initialize confidence for each class
         self.kp_conf = [KalmanParameters(), KalmanParameters(), KalmanParameters(), KalmanParameters()]
         self.kp_conf[trash_type].est = conf #set estimate for predicted type to be conf
+        self.kp_x = KalmanParameters(x)
         self.kp_y = KalmanParameters(y)
     
     def update_kalman(self, mea, kp):
@@ -70,7 +71,7 @@ class TrashItem:
             #Use the bounding box of the most confident trash_type     
             if new_item.trash_type == self.trash_type:            
                 self.x = new_item.x
-                self.y = new_item.y
+                self.y = self.kp_y.est
                 self.width = new_item.width
                 self.height = new_item.height
                     

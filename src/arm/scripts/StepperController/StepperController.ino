@@ -31,21 +31,21 @@ void stepperInvertPins(){
 }
 
 void stepperInitialize(){
-  stepper_x.setMaxSpeed(MAX_SPEED);
+  stepper_x.setMaxSpeed(MAX_SPEED_X);
   stepper_x.setAcceleration(ACCELERATION);
   stepper_x.enableOutputs();
   
- stepper_y1.setMaxSpeed(MAX_SPEED);
+ stepper_y1.setMaxSpeed(MAX_SPEED_Y);
  stepper_y1.setAcceleration(ACCELERATION);
  stepper_y1.enableOutputs();
  
- stepper_y2.setMaxSpeed(MAX_SPEED);
+ stepper_y2.setMaxSpeed(MAX_SPEED_Y);
  stepper_y2.setAcceleration(ACCELERATION);
  stepper_y2.enableOutputs();
 }
 
 void pullUPLimitSwitches(){
-  pinMode(LIM_X1_MIN, INPUT_PULLUP);
+ pinMode(LIM_X1_MIN, INPUT_PULLUP);
  pinMode(LIM_X2_MIN, INPUT_PULLUP);
  pinMode(LIM_X1_MAX, INPUT_PULLUP);
  pinMode(LIM_X2_MAX, INPUT_PULLUP);
@@ -128,6 +128,7 @@ void showParsedData() {
 // Funtion the wait until data is received
 void readData(){
   while(1){
+    checkLimits();
     recvWithStartEndMarkers();
     if(newData == true){
       strcpy(tempChars, receivedChars);
@@ -143,19 +144,19 @@ void readData(){
 struct LimitStatus checkLimits() {
   static LimitStatus limitStatus;
 
-  Serial.println(limitStatus.xMinCount);
-
   if(!digitalRead(LIM_X1_MIN) && !digitalRead(LIM_X2_MIN)){
     if(++limitStatus.xMinCount >= PAST_READING_REQ) {
+      limitStatus.xMaxCount = 0;
       limitStatus.xAxis = LimitState::Min;
+      Serial.println("Xmin");
     }
-  }
-  else if(!digitalRead(LIM_X1_MAX) && !digitalRead(LIM_X2_MAX)){
+  } else if(!digitalRead(LIM_X1_MAX) && !digitalRead(LIM_X2_MAX)){
     if(++limitStatus.xMaxCount >= PAST_READING_REQ) {
-    limitStatus.xAxis = LimitState::Max;
+      limitStatus.xMinCount = 0;
+      limitStatus.xAxis = LimitState::Max;
+      Serial.println("Xmax");
     }
-  }
-  else {
+  } else {
     limitStatus.xAxis = LimitState::None;
     limitStatus.xMinCount = 0;
     limitStatus.xMaxCount = 0;
@@ -163,20 +164,22 @@ struct LimitStatus checkLimits() {
 
   if(!digitalRead(LIM_Y1_MIN) && !digitalRead(LIM_Y2_MIN)){
     if(++limitStatus.yMinCount >= PAST_READING_REQ) {
+      limitStatus.yMaxCount = 0;
       limitStatus.yAxis = LimitState::Min;
+      Serial.println("Ymin");
     }
-  }
-  else if(!digitalRead(LIM_Y1_MAX) && !digitalRead(LIM_Y2_MAX)){
+  } else if(!digitalRead(LIM_Y1_MAX) && !digitalRead(LIM_Y2_MAX)){
     if(++limitStatus.yMaxCount >= PAST_READING_REQ) {
+      limitStatus.yMinCount = 0;
       limitStatus.yAxis = LimitState::Max;
+      Serial.println("Ymax");
     }
-  }
-    else {
+  } else {
     limitStatus.yAxis = LimitState::None;
     limitStatus.yMinCount = 0;
     limitStatus.yMaxCount = 0;
   }
-
+ 
   return limitStatus;
 }
 
@@ -184,18 +187,19 @@ struct LimitStatus checkLimits() {
 void homeXAxis(){
   // Reducing speed for acuracy
   stepper_x.setMaxSpeed(MIN_SPEED);
-  delay(5);
+  delay(1);
   
   long initial_homing=1;
   
-  Serial.print("Homing X-axis...");
+  Serial.println("Homing X-axis...");
   // Move until X-min limit switch is hit
   while(checkLimits().xAxis != LimitState::Min){
     stepper_x.moveTo(initial_homing);
     initial_homing++;
     stepper_x.run();
-    delay(5);
+//    delay(1);
   }
+  Serial.println("Hit limit...");
   stepper_x.setCurrentPosition(0);
   initial_homing=-1;
   // Move until X-min limit switch is deactivated
@@ -203,18 +207,20 @@ void homeXAxis(){
     stepper_x.moveTo(initial_homing);
     initial_homing--;
     stepper_x.run();
-    delay(5);
+//    delay(1);
   }
+  Serial.println("Backed off...");
   stepper_x.moveTo(initial_homing-10);
   while(stepper_x.distanceToGo() != 0){
     stepper_x.run();
   }
+  Serial.println("Finished calibration");
   
   stepper_x.setCurrentPosition(0);
   stepper_x.stop();
 
-  stepper_x.setMaxSpeed(MAX_SPEED);
-  delay(5);
+  stepper_x.setMaxSpeed(MAX_SPEED_X);
+  delay(1);
       
   Serial.println("Completed");
 }
@@ -222,9 +228,9 @@ void homeXAxis(){
 // Function to home Y-axis
 void homeYAxis(){
   // Reducing speed for acuracy
-  stepper_y1.setMaxSpeed(MIN_SPEED / 2);
-  stepper_y2.setMaxSpeed(MIN_SPEED / 2);
-  delay(5);
+  stepper_y1.setMaxSpeed(MIN_SPEED/2.0);
+  stepper_y2.setMaxSpeed(MIN_SPEED/2.0);
+//  delay(1);
   
   long initial_homing=-1;
   
@@ -236,7 +242,7 @@ void homeYAxis(){
     initial_homing--;
     stepper_y1.run();
     stepper_y2.run();
-    delay(5);
+//    delay(1);
   }
   stepper_y1.setCurrentPosition(0);
   stepper_y2.setCurrentPosition(0);
@@ -248,7 +254,7 @@ void homeYAxis(){
     initial_homing++;
     stepper_y1.run();
     stepper_y2.run();
-    delay(5);
+//    delay(1);
   }
   stepper_y1.moveTo(initial_homing+10);
   while(stepper_y1.distanceToGo() != 0){
@@ -262,9 +268,9 @@ void homeYAxis(){
   stepper_y1.stop();
   stepper_y2.stop();
 
-  //stepper_y1.setMaxSpeed(MAX_SPEED);
-  //stepper_y2.setMaxSpeed(MAX_SPEED);
-  delay(5);
+  stepper_y1.setMaxSpeed(MAX_SPEED_Y);
+  stepper_y2.setMaxSpeed(MAX_SPEED_Y);
+//  delay(1);
       
   Serial.println("Completed");
 }
@@ -280,7 +286,7 @@ void setup() {
   pullUPLimitSwitches();
   
   // initialize the serial port:
-  Serial.begin(115200);
+  Serial.begin(115200*2);
   blinkLight(); // Signal that code has started
 }
 
@@ -356,10 +362,13 @@ void loop(){
           stepper_x.run();
         }
 
-        if(stepper_y1.distanceToGo() != 0 && stepper_y2.distanceToGo() != 0){
-         stepper_y1.run();
+        if(stepper_y1.distanceToGo() != 0){
+          stepper_y1.run();
+        }
+        
+        if(stepper_y2.distanceToGo() != 0){
          stepper_y2.run();
-         }
+        }
 
         if (stepper_y1.distanceToGo() == 0 && stepper_y2.distanceToGo() == 0 && stepper_x.distanceToGo() == 0) {
           current_state = WAITING_FOR_INSTRUCTION;
@@ -373,9 +382,12 @@ void loop(){
       break;
     case X_MIN_LS_HIT:
       Serial.println("X_MIN Limit switch hit");
-      homeXAxis();
-      stepper_x.moveTo(stepper_x.currentPosition());
-      current_state = MOVING;
+      if(limitStatus.xAxis == LimitState::Min){
+        stepper_x.move(-1);
+      } else {
+        stepper_x.moveTo(stepper_x.currentPosition());
+        current_state = MOVING;
+      }
       break;
     case X_MAX_LS_HIT:
       Serial.println("X_MAX Limit switch hit");
@@ -390,18 +402,24 @@ void loop(){
       break;
     case Y_MIN_LS_HIT:
       Serial.println("Y_MIN Limit switch hit");
-      homeYAxis();
-      stepper_y1.moveTo(stepper_y1.currentPosition());
-      stepper_y2.moveTo(stepper_y2.currentPosition());
-      current_state = MOVING;
+      if(limitStatus.yAxis == LimitState::Max){
+        stepper_y1.move(1);
+        stepper_y2.move(1);
+      } else {
+        stepper_y1.moveTo(stepper_y1.currentPosition());
+        stepper_y2.moveTo(stepper_y2.currentPosition());
+        current_state = MOVING;
+      }
       break;
     case Y_MAX_LS_HIT:
       Serial.println("Y_MAX Limit switch hit");
       if(limitStatus.yAxis == LimitState::Max){
+        Serial.println("backing up");
         stepper_y1.move(-1);
         stepper_y2.move(-1);
       }
       else {
+        Serial.println("out of switch");
         stepper_y1.moveTo(stepper_y1.currentPosition());
         stepper_y2.moveTo(stepper_y2.currentPosition());
         current_state = MOVING;
@@ -409,5 +427,5 @@ void loop(){
       break;
   }
         
-  delay(5);
+//  delay(5);
 }

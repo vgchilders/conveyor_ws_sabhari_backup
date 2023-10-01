@@ -34,7 +34,7 @@ class ObjectDetectionModel:
         #self.init_faster_rcnn()
         self.init_yolo_v5()
 
-        print("Model Init")
+        print("object_detection_model:Model Init")
 
     # def init_faster_rcnn(self):
     #     weights_path = "weights/frcnn_labtrash_weights.pth"
@@ -50,7 +50,7 @@ class ObjectDetectionModel:
 
     def init_yolo_v5(self):
         #device=torch.device("cpu")
-        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='weights/best.pt')#.to(device)
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='/home/recycling-robot-mqp/conveyor_ws_sabhari_backup/src/camera/scripts/weights/best.pt')#.to(device)
         #self.model = torch.hub.load('weights/custom_yolov5s.yaml', 'custom', path='weights/yolo_lab_data_aug.pt', source='local')
 
     def classify(self, image):

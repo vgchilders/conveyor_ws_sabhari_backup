@@ -36,10 +36,10 @@
         <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" />
     </group> -->
 
+    <node name="arm_controller" type="arm_controller.py" pkg="arm" output="screen"/>
     <node name="master" type="master_controller.py" pkg="arm" output="screen"/>
-    <!-- <node name="arm_controller" type="arm_controller.py" pkg="arm" output="screen"/> -->
-    <!-- <node name="gui" type="GUI.py" pkg="gui" output="screen"/> -->
-    <node name="camera" type="camera_gui_node.py" pkg="camera" output="screen"/>
+    <node name="gui" type="GUI.py" pkg="gui" output="screen"/>
+    <!-- <node name="camera" type="camera_gui_node.py" pkg="camera" output="screen"/> -->
 
     <include file="$(find realsense2_camera)/launch/rs_camera.launch">
         <arg name="align_depth" value="true"/>

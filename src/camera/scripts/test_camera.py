@@ -73,7 +73,7 @@ class Camera:
 			self.raw_sub.unregister() # TODO look at this
 
 
-	def run_model(self, ros_image):
+	def run_model(self, ros_image): #roslaunch realsense2_camera rs_camera.launch filters:=pointcloud
 		x = 106#random.randrange(640)
 		y = 421	#random.randrange(480)
 

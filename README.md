@@ -19,6 +19,9 @@ roslaunch arm GUI_controller.launch
 roscd camera/scripts/
 python3 camera_gui_node.py 
 roscd arm/scripts
-python3 camera_gui_node.py 
+python3 master_controller.py 
 
 Turn on the conveyor belt and set it to a speed of 15 in reverse.
+
+cd conveyor_ws_sabhari_backup;cd src
+roslaunch arm GUI_controller.launch;roscd camera/scripts/;python3 camera_gui_node.py;roscd arm/scripts;python3 master_controller.py
